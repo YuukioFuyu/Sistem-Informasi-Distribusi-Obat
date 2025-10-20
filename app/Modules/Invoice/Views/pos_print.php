@@ -64,7 +64,7 @@ function money($val, $currency='Rp'){
     .container {
         width: 210mm;
         height: 297mm;
-        padding: 18mm 3mm;
+        padding: 3mm 3mm;
         box-sizing: border-box;
         position: relative;
         color: #000;
