@@ -842,7 +842,7 @@ return $product_information;
 
  public function invoice_main($invoice_id){
    return  $details_info = $this->db->table('invoice a')
-            ->select('a.*,c.customer_name,d.firstname,d.lastname')
+            ->select('a.*,c.customer_name,c.customer_npwp,d.firstname,d.lastname')
             ->join('customer_information c','a.customer_id=c.customer_id','left')
             ->join('user d','a.sales_by=d.id')
             ->where('a.invoice_id',$invoice_id)
@@ -859,8 +859,9 @@ return $product_information;
 
   public function invoice_details($invoice_id){
    return  $details_info = $this->db->table('invoice_details a')
-            ->select('a.*,c.product_name,c.strength')
+            ->select('a.*,c.product_name,c.strength, d.expeire_date')
             ->join('product_information c','a.product_id=c.product_id','left')
+            ->join('product_purchase_details d','a.batch_id=d.batch_id AND a.product_id=d.product_id','left')
             ->where('a.invoice_id',$invoice_id)
             ->get()
             ->getResultArray();

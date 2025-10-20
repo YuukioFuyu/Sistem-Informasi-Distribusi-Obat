@@ -43,6 +43,7 @@ class Invoice extends BaseController
         'date'              => $this->request->getVar('date'),
         'total_amount'      => ($this->request->getVar('n_total')?$this->request->getVar('n_total'):0),
         'invoice'           => $this->number_generator(),
+        'other_dpp'         => ($this->request->getVar('other_dpp') ? $this->request->getVar('other_dpp') : 0),
         'total_tax'         => ($this->request->getVar('total_tax')?$this->request->getVar('total_tax'):0),
         'prevous_due'       => ($this->request->getVar('previous')?$this->request->getVar('previous'):0),
         'paid_amount'       => ($this->request->getVar('paid_amount', FILTER_SANITIZE_STRING)?$this->request->getVar('paid_amount', FILTER_SANITIZE_STRING):0),
@@ -118,9 +119,10 @@ class Invoice extends BaseController
         $data['invoice'] = (object)$invoiceData = array(
         'invoice_id'        => $invoice_id,
         'customer_id'       => $this->request->getVar('customer_id'),
-        'date'              => date('Y-m-d'),
+        'date'              => date('Y-m-d H:i:s'),
         'total_amount'      => ($this->request->getVar('n_total')?$this->request->getVar('n_total'):0),
         'invoice'           => $this->number_generator(),
+        'other_dpp'         => ($this->request->getVar('other_dpp') ? $this->request->getVar('other_dpp') : 0),
         'total_tax'         => ($this->request->getVar('total_tax')?$this->request->getVar('total_tax'):0),
         'prevous_due'       => ($this->request->getVar('previous')?$this->request->getVar('previous'):0),
         'paid_amount'       => ($this->request->getVar('paid_amount')?$this->request->getVar('paid_amount'):0),
@@ -170,6 +172,7 @@ class Invoice extends BaseController
         $walking_customer       = $this->invoiceModel->pos_customer_setup();
         $data['customer_id']    = ($walking_customer?$walking_customer[0]['customer_id']:'');
         $data['customer_name']  = ($walking_customer?$walking_customer[0]['customer_name']:'');
+        $data['customer_npwp']  = ($walking_customer?$walking_customer[0]['customer_npwp']:'');
         $data['product_list']   = $this->invoiceModel->medicine_list();
         $data['bank_list']      = $this->invoiceModel->bank_list();
         $data['categorylist']   = $this->invoiceModel->category_list();
@@ -230,6 +233,7 @@ class Invoice extends BaseController
         'date'              => $this->request->getVar('date'),
         'total_amount'      => ($this->request->getVar('n_total')?$this->request->getVar('n_total'):0),
         'invoice'           => $this->request->getVar('invoice_no'),
+        'other_dpp'         => ($this->request->getVar('other_dpp') ? $this->request->getVar('other_dpp') : 0),
         'total_tax'         => ($this->request->getVar('total_tax')?$this->request->getVar('total_tax'):0),
         'prevous_due'       => ($this->request->getVar('previous')?$this->request->getVar('previous'):0),
         'paid_amount'       => ($this->request->getVar('paid_amount')?$this->request->getVar('paid_amount'):0),
