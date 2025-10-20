@@ -45,6 +45,24 @@
                             <input name="phone" type="text" class="form-control valid_number" id="phone" placeholder="<?php echo lan('phone') ?>"  value="<?php echo $setting->phone ?>" >
                         </div>
                     </div>
+                    <div class="form-group row">
+                        <label for="npwp" class="col-sm-3 col-form-label"><?php echo lan('npwp') ?></label>
+                        <div class="col-sm-9">
+                            <input name="npwp" type="text" class="form-control" id="npwp" placeholder="<?php echo lan('npwp') ?>"  value="<?php echo $setting->npwp ?>" >
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="cdob" class="col-sm-3 col-form-label"><?php echo lan('cdob') ?></label>
+                        <div class="col-sm-9">
+                            <input name="cdob" type="text" class="form-control" id="cdob" placeholder="<?php echo lan('cdob') ?>"  value="<?php echo $setting->cdob ?>" >
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="pbf" class="col-sm-3 col-form-label"><?php echo lan('pbf') ?></label>
+                        <div class="col-sm-9">
+                            <input name="pbf" type="text" class="form-control" id="pbf" placeholder="<?php echo lan('pbf') ?>"  value="<?php echo $setting->pbf ?>" >
+                        </div>
+                    </div>
                      <?php if(!empty($setting->favicon)) {  ?>
                     <div class="form-group row">
                         <label for="faviconPreview" class="col-sm-3 col-form-label"></label>
