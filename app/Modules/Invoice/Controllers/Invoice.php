@@ -40,10 +40,11 @@ class Invoice extends BaseController
         $data['invoice'] = (object)$invoiceData = array(
         'invoice_id'        => $invoice_id,
         'customer_id'       => $this->request->getVar('customer_id'),
-        'date'              => $this->request->getVar('date'),
+        'date'              => ($this->request->getVar('date')===date('Y-m-d')?date('Y-m-d H:i:s'):$this->request->getVar('date').' 00:00:00'),
         'total_amount'      => ($this->request->getVar('n_total')?$this->request->getVar('n_total'):0),
         'invoice'           => $this->number_generator(),
-        'other_dpp'         => ($this->request->getVar('other_dpp') ? $this->request->getVar('other_dpp') : 0),
+        'deemed_value'      => ($this->request->getVar('deemed_value')?$this->request->getVar('deemed_value'):0),
+        'request_date'      => ($this->request->getVar('request_date')?$this->request->getVar('request_date'):0),
         'total_tax'         => ($this->request->getVar('total_tax')?$this->request->getVar('total_tax'):0),
         'prevous_due'       => ($this->request->getVar('previous')?$this->request->getVar('previous'):0),
         'paid_amount'       => ($this->request->getVar('paid_amount', FILTER_SANITIZE_STRING)?$this->request->getVar('paid_amount', FILTER_SANITIZE_STRING):0),
@@ -52,7 +53,7 @@ class Invoice extends BaseController
         'invoice_discount'  => ($this->request->getVar('invoice_discount', FILTER_SANITIZE_STRING)?$this->request->getVar('invoice_discount', FILTER_SANITIZE_STRING):0),
         'bank_id'           => $this->request->getVar('bank_id'),
         'sales_by'          => $this->session->get('id'),
-        'invoice_details'   => $this->request->getVar('details', FILTER_SANITIZE_STRING),
+        'invoice_details'   => ($this->request->getVar('details', FILTER_SANITIZE_STRING)?:NULL),
         'payment_type'      => $this->request->getVar('payment_type'),
         'status'            => 1
         );
@@ -122,7 +123,7 @@ class Invoice extends BaseController
         'date'              => date('Y-m-d H:i:s'),
         'total_amount'      => ($this->request->getVar('n_total')?$this->request->getVar('n_total'):0),
         'invoice'           => $this->number_generator(),
-        'other_dpp'         => ($this->request->getVar('other_dpp') ? $this->request->getVar('other_dpp') : 0),
+        'deemed_value'      => ($this->request->getVar('deemed_value')?$this->request->getVar('deemed_value'):0),
         'total_tax'         => ($this->request->getVar('total_tax')?$this->request->getVar('total_tax'):0),
         'prevous_due'       => ($this->request->getVar('previous')?$this->request->getVar('previous'):0),
         'paid_amount'       => ($this->request->getVar('paid_amount')?$this->request->getVar('paid_amount'):0),
@@ -131,7 +132,7 @@ class Invoice extends BaseController
         'invoice_discount'  => ($this->request->getVar('invoice_discount')?$this->request->getVar('invoice_discount'):0),
         'bank_id'           => $this->request->getVar('bank_id'),
         'sales_by'          => $this->session->get('id'),
-        'invoice_details'   => 'Thank you',
+        'invoice_details'   => ($this->request->getVar('details', FILTER_SANITIZE_STRING)?:NULL),
         'payment_type'      => $this->request->getVar('payment_type'),
         'status'            => 1
         );
@@ -230,10 +231,11 @@ class Invoice extends BaseController
         $data['invoice'] = (object)$invoiceData = array(
         'invoice_id'        => $invoice_id,
         'customer_id'       => $this->request->getVar('customer_id'),
-        'date'              => $this->request->getVar('date'),
+        'date'              => ($this->request->getVar('date')===date('Y-m-d')?date('Y-m-d H:i:s'):$this->request->getVar('date').' 00:00:00'),
         'total_amount'      => ($this->request->getVar('n_total')?$this->request->getVar('n_total'):0),
         'invoice'           => $this->request->getVar('invoice_no'),
-        'other_dpp'         => ($this->request->getVar('other_dpp') ? $this->request->getVar('other_dpp') : 0),
+        'deemed_value'      => ($this->request->getVar('deemed_value')?$this->request->getVar('deemed_value'):0),
+        'request_date'      => ($this->request->getVar('request_date')?$this->request->getVar('request_date'):0),
         'total_tax'         => ($this->request->getVar('total_tax')?$this->request->getVar('total_tax'):0),
         'prevous_due'       => ($this->request->getVar('previous')?$this->request->getVar('previous'):0),
         'paid_amount'       => ($this->request->getVar('paid_amount')?$this->request->getVar('paid_amount'):0),
@@ -242,7 +244,7 @@ class Invoice extends BaseController
         'invoice_discount'  => ($this->request->getVar('invoice_discount')?$this->request->getVar('invoice_discount'):0),
         'bank_id'           => $this->request->getVar('bank_id'),
         'sales_by'          => $this->session->get('id'),
-        'invoice_details'   => $this->request->getVar('details', FILTER_SANITIZE_STRING),
+        'invoice_details'   => ($this->request->getVar('details', FILTER_SANITIZE_STRING)?:NULL),
         'payment_type'      => $this->request->getVar('payment_type'),
         'status'            => 1
         );

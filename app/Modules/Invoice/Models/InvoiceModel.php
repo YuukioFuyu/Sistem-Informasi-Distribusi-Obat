@@ -26,13 +26,14 @@ class InvoiceModel
 
      public function detailsdata($id){
         $builder = $this->db->table('invoice_details a')
-                             ->select('a.*,b.*,c.unit_name')
-                             ->join('product_information b','b.product_id = a.product_id')
-                             ->join('unit c','c.id = b.unit')
+                             ->select('a.*, b.*, c.unit_name, d.expeire_date')
+                             ->join('product_information b', 'b.product_id = a.product_id', 'left')
+                             ->join('unit c', 'c.id = b.unit', 'left')
+                             ->join('product_purchase_details d', 'a.batch_id = d.batch_id AND a.product_id = d.product_id', 'left')
                              ->where('a.invoice_id', $id)
                              ->where('a.quantity >', 0)
                              ->get()
-                             ->getResultArray(); 
+                             ->getResultArray();
     return $builder;
 
 

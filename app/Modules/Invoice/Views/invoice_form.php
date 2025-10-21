@@ -17,64 +17,77 @@
     <div class="card-body">
       <?php echo form_open_multipart("invoice/add_invoice/", array('id' => 'manual_sale_insert')) ?>            
                 <div class="form-group row">
-                    <label for="customer_name" class="col-md-2 text-right col-form-label"><?php echo lan('customer_name')?> <i class="text-danger"> * </i>:</label>
+                    <label for="customer_name" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('customer_name')?> <i class="text-danger"> * </i>:
+                    </label>
                     <div class="col-md-4">
                         <div class="">
-                          <input type="text" name="customer_name" id="customer_name" class="form-control" value="<?php echo $customer_name?>" onkeyup="CustomerListInvoice()" tabindex="1">
-                           <input type="hidden" name="customer_id" id="customer_id" class="form-control" value="<?php echo $customer_id?>">
+                            <input type="text" name="customer_name" id="customer_name" class="form-control" value="<?php echo $customer_name?>" onkeyup="CustomerListInvoice()" tabindex="1">
+                            <input type="hidden" name="customer_id" id="customer_id" class="form-control" value="<?php echo $customer_id?>">
                         </div>
-                       
                     </div>
-                     <label for="date" class="col-md-2 text-right col-form-label"><?php echo lan('date')?> <i class="text-danger"> * </i>:</label>
+                    <label for="date" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('date')?> <i class="text-danger"> * </i>:
+                    </label>
                     <div class="col-md-4">
                         <div class="">
-                           
                             <input type="text" name="date" class="form-control datepicker" id="date" placeholder="<?php echo lan('date')?>" value="" tabindex="2">
-
                         </div>
-                       
                     </div>
                 </div>
-                 <div class="form-group row">
-                    <label for="invoice_no" class="col-md-2 text-right col-form-label"><?php echo lan('invoice_no')?>:</label>
+
+                <div class="form-group row">
+                    <label for="invoice_no" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('invoice_no')?>:
+                    </label>
                     <div class="col-md-4">
                         <div class=""> 
                             <input type="text" class="form-control" name="invoice_no" id="invoice_no" placeholder="<?php echo lan('invoice_no')?>" value="<?php echo $invoice_no?>" readonly>
                         </div>
                     </div>
-                      <label for="details" class="col-md-2 text-right col-form-label"><?php echo lan('details')?>:</label>
+                    <label for="request_date" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('request_date')?>:
+                    </label>
                     <div class="col-md-4">
                         <div class="">
-                           
-                            <input type="text" class="form-control" name="details" id="details" placeholder="<?php echo lan('details')?>" value="" tabindex="3">
+                            <input type="text" class="form-control datepicker" name="request_date" id="request_date" value="" tabindex="3">
                         </div>
                     </div>
                 </div>
+
                 <div class="form-group row">
-                    <label for="payment_type" class="col-md-2 text-right col-form-label"><?php echo lan('payment_type')?>:</label>
+                    <label for="payment_type" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('payment_type')?>:
+                    </label>
                     <div class="col-md-4">
                         <div class="">
-                            
-                       <select name="payment_type" id="payment_type" onchange="bank_payment(this.value)" class="form-control select2" tabindex="4">
-                            <option value="1" selected="selected"><?php echo lan('cash_payment')?></option>
-                            <option value="2"><?php echo lan('bank_payment')?></option>
-                            
-                        </select>
-
+                            <select name="payment_type" id="payment_type" onchange="bank_payment(this.value)" class="form-control select2" tabindex="4">
+                                <option value="1" selected="selected"><?php echo lan('cash_payment')?></option>
+                                <option value="2"><?php echo lan('bank_payment')?></option>
+                            </select>
                         </div>
-                       
                     </div>
-                 
-                     <label for="bank" class="col-md-2 text-right bank_div col-form-label"><?php echo lan('bank')?>:</label>
+                    <label for="details" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('details')?>:
+                    </label>
+                    <div class="col-md-4">
+                        <div class="">
+                            <input type="text" class="form-control" name="details" id="details" value="" tabindex="5">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="bank" class="col-md-2 text-right bank_div col-form-label">
+                        <?php echo lan('bank')?>:
+                    </label>
                     <div class="col-md-4 bank_div" id="bank_div">
                         <div class="">
-                            
-                         <?php echo  form_dropdown('bank_id',$bank_list,null, 'class="form-control select2" id="bank_id"') ?> 
+                            <?php echo form_dropdown('bank_id', $bank_list, null, 'class="form-control select2" id="bank_id"') ?> 
                         </div>
-                       
                     </div>
-               
                 </div>
+
                  <div class="table-responsive">
             <table class="table table-bordered table-hover table-sm text-nowrap custom-table table-sm text-nowrap" id="normalinvoice">
           <thead>
@@ -175,20 +188,27 @@
                        <tfoot>
                                     
                                     <tr>
-                                        <td colspan="8" rowspan="2">
-                                     
-                                    </td>
-                                        <td class="text-right" colspan="1"><b><?php echo lan('invoice_discount') ?>:</b></td>
+                                        <td class="text-right" colspan="9"><b><?php echo lan('deemed_value') ?>:</b></td>
                                         <td class="text-right">
-                                            <input type="text" id="invdcount" class="form-control text-right valid_number" name="invoice_discount" onkeyup="calculateSumInvoice();" onchange="calculateSumInvoice()" placeholder="0.00" tabindex="12"/>
-                                            <input type="hidden" id="total_product_dis" value="">
-                                           
+                                            <input type="text" id="deemed_value" class="form-control form-control-sm text-right dppr valid_number" name="deemed_value" onkeyup="calculateSum_pos()" placeholder="0.00" onchange="calculateSum_pos()" tabindex="<?php echo $tabindex + 6;?>" />
                                         </td>
                                         <td> 
-                                              <button  class="btn btn-info" type="button" onClick="addInputFieldInvoice('addinvoiceItem');" tabindex="11" id="add_invoice_item"><i class="fa fa-plus"></i>
+                                              <button  class="btn btn-info" type="button" onClick="addInputFieldInvoice('addinvoiceItem');" tabindex="<?php echo $tabindex + 7;?>" id="add_invoice_item"><i class="fa fa-plus"></i>
                                             </button>
 
                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="8" rowspan="2">
+                                      
+                                    </td>
+                                        <td class="text-right" colspan="1"><b><?php echo lan('invoice_discount') ?>:</b></td>
+                                        <td class="text-right">
+                                            <input type="text" id="invdcount" class="form-control text-right valid_number" name="invoice_discount" onkeyup="calculateSumInvoice()" onchange="calculateSumInvoice()" placeholder="0.00" tabindex="<?php echo $tabindex + 8;?>"/>
+                                            <input type="hidden" id="total_product_dis" value="<?php echo ($invoice->total_discount?$invoice->total_discount:0) - ($invoice->invoice_discount?$invoice->invoice_discount:0); ?>" >
+                                           
+                                        </td>
+                                        
                                     </tr>
 
                                     <tr>

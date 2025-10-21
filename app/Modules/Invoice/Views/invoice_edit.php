@@ -41,39 +41,46 @@
                             <input type="hidden" class="form-control" name="invoice_id" id="invoice_id" placeholder="" value="<?php echo $invoice->invoice_id?>">
                         </div>
                     </div>
-                      <label for="details" class="col-md-2 text-right col-form-label"><?php echo lan('details')?>:</label>
+                      <label for="request_date" class="col-md-2 text-right col-form-label"><?php echo lan('request_date')?>:</label>
                     <div class="col-md-4">
                         <div class="">
-                           
-                            <input type="text" class="form-control" name="details" id="details" placeholder="<?php echo lan('details')?>" value="<?php echo $invoice->invoice_details?>" tabindex="3">
+                            <input type="text" class="form-control datepicker" name="request_date" id="request_date" value="<?php echo $invoice->request_date ?>" tabindex="3">
                         </div>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="payment_type" class="col-md-2 text-right col-form-label"><?php echo lan('payment_type')?>:</label>
+                    <label for="payment_type" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('payment_type')?>:
+                    </label>
                     <div class="col-md-4">
                         <div class="">
-                            
-                       <select name="payment_type" id="payment_type" onchange="bank_payment(this.value)" class="form-control select2" tabindex="4">
-                            <option value="1" <?php  if($invoice->payment_type ==1){echo 'selected';}?>><?php echo lan('cash_payment')?></option>
-                            <option value="2" <?php  if($invoice->payment_type ==2){echo 'selected';}?>><?php echo lan('bank_payment')?></option>
-                            
-                        </select>
-
+                            <select name="payment_type" id="payment_type" onchange="bank_payment(this.value)" class="form-control select2" tabindex="4">
+                                <option value="1" selected="selected"><?php echo lan('cash_payment')?></option>
+                                <option value="2"><?php echo lan('bank_payment')?></option>
+                            </select>
                         </div>
-                       
                     </div>
-                 
-                     <label for="bank" class="col-md-2 text-right bank_div col-form-label"><?php echo lan('bank')?>:</label>
+                    <label for="details" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('details')?>:
+                    </label>
+                    <div class="col-md-4">
+                        <div class="">
+                            <input type="text" class="form-control" name="details" id="details" placeholder="<?php echo lan('details')?>" value="<?php echo $invoice->invoice_details?>" tabindex="3">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="bank" class="col-md-2 text-right bank_div col-form-label">
+                        <?php echo lan('bank')?>:
+                    </label>
                     <div class="col-md-4 bank_div" id="bank_div">
                         <div class="">
-                            
-                         <?php echo  form_dropdown('bank_id',$bank_list,$invoice->bank_id, 'class="form-control select2" id="bank_id"') ?> 
+                            <?php echo form_dropdown('bank_id', $bank_list, null, 'class="form-control select2" id="bank_id"') ?> 
                         </div>
-                       
                     </div>
-               
                 </div>
+
                  <div class="table-responsive">
             <table class="table table-bordered table-hover table-sm text-nowrap custom-table table-sm text-nowrap" id="normalinvoice">
           <thead>
@@ -215,6 +222,17 @@
                        <tfoot>
                                     
                                     <tr>
+                                        <td class="text-right" colspan="9"><b><?php echo lan('deemed_value') ?>:</b></td>
+                                        <td class="text-right">
+                                            <input type="text" id="deemed_value" class="form-control form-control-sm text-right dppr valid_number" name="deemed_value" onkeyup="calculateSum_pos()" placeholder="0.00" onchange="calculateSum_pos()" value="<?php echo $invoice->deemed_value ?>" tabindex="<?php echo $tabindex + 6;?>" />
+                                        </td>
+                                        <td> 
+                                              <button  class="btn btn-info" type="button" onClick="addInputFieldInvoice('addinvoiceItem');" tabindex="<?php echo $tabindex + 7;?>" id="add_invoice_item"><i class="fa fa-plus"></i>
+                                            </button>
+
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td colspan="8" rowspan="2">
                                       
                                     </td>
@@ -224,11 +242,7 @@
                                             <input type="hidden" id="total_product_dis" value="<?php echo ($invoice->total_discount?$invoice->total_discount:0) - ($invoice->invoice_discount?$invoice->invoice_discount:0); ?>" >
                                            
                                         </td>
-                                        <td> 
-                                              <button  class="btn btn-info" type="button" onClick="addInputFieldInvoice('addinvoiceItem');" tabindex="<?php echo $tabindex + 7;?>" id="add_invoice_item"><i class="fa fa-plus"></i>
-                                            </button>
-
-                                        </td>
+                                        
                                     </tr>
 
                                     <tr>

@@ -15,204 +15,370 @@
 </div>
 </div>
 
+<div id="printArea">
+    <?php
+        // ========== Placeholder / Default mapping (jika backend belum mengisi) ==========
+        $settings_info = $settings_info ?? new stdClass();
+        $settings_info->title   = $settings_info->title   ?? '';
+        $settings_info->address = $settings_info->address ?? '-';
+        $settings_info->phone   = $settings_info->phone   ?? '-';
+        $settings_info->logo    = $settings_info->logo    ?? '';
+        $settings_info->currency= $settings_info->currency?? '';
+        $settings_info->npwp    = $settings_info->npwp    ?? '-';
+        $settings_info->cdob    = $settings_info->cdob    ?? '-';
+        $settings_info->izin_pbf= $settings_info->izin_pbf?? '-';
 
-<div class="card card-body p-5">
-<div class="" id="printArea">
-<div class="row">
-    <div class="col text-center">
-        <img src="<?php echo base_url().$settings_info->logo;?>" alt="..." class="img-fluid mb-4" height="100px" width="250px;">
-        <h4 class="mb-0 font-weight-bold"><?php echo esc($settings_info->title);?></h4>
-        <p class="text-muted mb-5"><?php echo lan('invoice')?>: <?php echo esc($invoice->invoice)?></p>
-    </div>
-</div>
-<div class="row">
-    <div class="col-12 col-md-6">
-        <h3 class="text-uppercase text-success font-weight-600"><?php echo lan('billing_from')?></h3>
-        <p class="text-muted mb-4">
-            <strong class="text-body fs-16"><?php echo esc($settings_info->title);?>.</strong> <br>
-            <?php echo esc($settings_info->address);?> <br>
-            <?php echo esc($settings_info->email);?> <br>
-            P: <?php echo esc($settings_info->phone);?>
-        </p>
-        <h6 class="text-uppercase text-muted fs-12 font-weight-600"><?php echo lan('invoice_no')?></h6>
-        <p class="mb-4"><?php echo esc($invoice->invoice);?></p>
-    </div>
-    <div class="col-12 col-md-6 text-md-right">
-        <h3 class="text-uppercase text-success font-weight-600"><?php echo lan('billing_to')?></h3>
-        <p class="text-muted mb-4">
-            <strong class="text-body fs-16"><?php echo esc($invoice->customer_name);?></strong> 
-            <?php if($invoice->customer_address){?>
-            <br>
-           <?php echo esc($invoice->customer_address);?> <?php }?>
-           <?php if($invoice->email_address){?>
-           <br>
-           <?php echo esc($invoice->email_address);?>
-       <?php }?>
-            <br>
-            P: <?php echo esc($invoice->customer_mobile);?>
-        </p>
-        <h6 class="text-uppercase text-muted fs-12 font-weight-600"> <?php echo lan('date')?></h6>
-        <p class="mb-4"><time datetime=""> <?php echo esc($invoice->date);?></time></p>
-    </div>
-</div> 
-<div class="row">
-    <div class="col-12">
-        <div class="table-responsive">
-                <?php 
-                 $total_dis = 0;
-                  foreach($details as $dis_per){
-                    $total_dis += $dis_per['discount'];
-                  }
-                  $colspan = 0;
-                   if($total_dis > 0){
-                     $colspan = 1;
-                   }
-                                      ?>
-            <table class="table my-4">
+        // Main invoice / fraktur
+        $invoice = $invoice ?? new stdClass();
+        $invoice->invoice                 = $invoice->invoice ?? '0000';
+        $invoice->date                    = $invoice->date ?? '';
+        $invoice->customer_name           = $invoice->customer_name ?? '';
+        $invoice->customer_npwp           = $invoice->customer_npwp ?? '-';
+        $invoice->request_date            = $invoice->request_date ?? '';
+        $invoice->sales_by_firstname      = $invoice->sales_by_firstname ?? 'Sales';
+        $invoice->sales_by_lastname       = $invoice->sales_by_lastname ?? '';
+        $invoice->total_discount          = $invoice->total_discount ?? 0;
+        $invoice->invoice_discount        = $invoice->invoice_discount ?? 0;
+        $invoice->total_tax               = $invoice->total_tax ?? 0;
+        $invoice->prevous_due             = $invoice->prevous_due ?? 0;
+        $invoice->total_amount            = $invoice->total_amount ?? 0;
+        $invoice->paid_amount             = $invoice->paid_amount ?? 0;
+        $invoice->due_amount              = $invoice->due_amount ?? 0;
+        $invoice->invoice_details         = $invoice->invoice_details ?? 'Hormat kami';
+
+        // ========== Perhitungan ringkasan (fallback jika backend belum memberikan) ==========
+        $total = 0;
+        $total_discount_amount = 0;
+        foreach($details as $d){
+            $line_total = isset($d['total_price']) ? $d['total_price'] : ( (isset($d['rate'])? $d['rate']:0) * (isset($d['quantity'])? $d['quantity']:1) );
+            $total += $line_total;
+            $total_discount_amount += isset($d['discount']) ? $d['discount'] : 0;
+        }
+        // Jika main sudah punya nilai, prioritaskan nilai backend
+        $subtotal = $invoice->total_amount && $invoice->total_amount>0 ? ($invoice->total_amount - $invoice->total_tax) : $total;
+        $deemed_value = $invoice->deemed_value ?? 0; // nilai lain
+        $ppn_amount = $invoice->total_tax ?? 0;
+        $grand_total = $invoice->total_amount && $invoice->total_amount>0 ? $invoice->total_amount : ($subtotal + $deemed_value + $ppn_amount);
+
+        // Helper currency format
+        function money($val, $currency='Rp'){
+            return $currency . ' ' . number_format((float)$val,0,',','.');
+        }
+    ?>
+    <head>
+        <meta charset="UTF-8">
+        <title>Fraktur - <?php echo htmlspecialchars($invoice->invoice); ?></title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <style>
+        /* ====== Print page settings ====== */
+        @page { size: A4 portrait; margin: 0; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            font-size: 16px; /* 13px × 1.3 */
+            -webkit-print-color-adjust: exact;
+        }
+
+        .container {
+            width: 210mm;
+            height: 297mm;
+            padding: 3.5mm 3.5mm;
+            box-sizing: border-box;
+            position: relative;
+            color: #000;
+            background: #fff;
+        }
+
+        /* ====== HEADER ====== */
+        .header-row {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            min-height: 90px;
+        }
+
+        .left-header {
+            display: flex;
+            align-items: flex-start;
+            max-width: 46%;
+        }
+
+        .logo {
+            width: 110.5px; /* 85 × 1.3 */
+            height: 110.5px;
+            background: #f0f0f0;
+            margin-right: 15.6px; /* 12 × 1.3 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .logo img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+
+        .company-title {
+            font-weight: bold;
+            font-size: 20px; /* 16 × 1.3 */
+            line-height: 1.1;
+        }
+
+        .company-info {
+            margin-top: 7.8px; /* 6 × 1.3 */
+            font-size: 15px; /* 12 × 1.3 */
+            line-height: 1.25;
+        }
+
+        .center-header {
+            position: absolute;
+            top: 50%;
+            left: 58%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            font-size: 19px; /* 15 × 1.3 */
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .right-header {
+            border: 1px solid #000;
+            padding: 10.4px 15.6px; /* 8 × 1.3, 12 × 1.3 */
+            font-size: 16.5px; /* 13 × 1.3 */
+            line-height: 1.8;
+            min-width: 200px;
+            box-sizing: border-box;
+        }
+
+        /* ====== TABLE ====== */
+        .items {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .items th {
+            border: 1px solid #000 !important;
+            padding: 7px 7px;
+            text-align: center;
+            font-size: 15px; /* 12 × 1.3 */
+            font-weight: bold;
+        }
+
+        .items td {
+            border-top: none;
+            border-bottom: none;
+            border-left: 1px solid #000 !important;
+            border-right: 1px solid #000 !important;
+            padding: 5px 5px;
+            text-align: center;
+            font-size: 15px; /* 12 × 1.3 */
+        }
+
+        .items tbody tr:last-child td {
+            border-bottom: 1px solid #000 !important;
+        }
+
+        .items th { font-weight: bold !important; }
+        .items td.left { text-align: left; padding-left: 8px; }
+        .items tbody tr { height: 18px; }
+
+        /* ====== FOOTER AREA (ABSOLUTE POSITIONS) ====== */
+        .footer-area {
+            position: relative;
+            width: 100%;
+            height: 140px;
+            margin-top: 20px;
+        }
+
+        .left-footer {
+            position: absolute;
+            top: 4px;
+            left: 0;
+            width: 32%;
+            line-height: 1.2;
+            text-align: center;
+            font-size: 16.5px; /* 13 × 1.3 */
+        }
+        .left-footer p { margin: 6px 0; }
+
+        .center-footer {
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 17.5px; /* 14 × 1.3 */
+        }
+
+        .right-footer {
+            position: absolute;
+            top: 2px;
+            right: 0;
+            width: 28%;
+            font-size: 16.5px; /* 13 × 1.3 */
+            line-height: 1.1;
+            text-align: left;
+            box-sizing: border-box;
+            padding-left: 7.8px; /* 6 × 1.3 */
+        }
+
+        .right-footer p { margin: 5.2px 0; /* 4 × 1.3 */ }
+        .right-footer .line { border-top: 2px solid #000; margin: 7.8px 0; width: 100%; display: block; }
+
+        /* Misc */
+        .small { font-size: 14px; /* 11 × 1.3 */ }
+        .text-right { text-align: center !important; }
+        .muted { color: #333; }
+    </style>
+
+    </head>
+    <body>
+        <div class="container">
+
+            <!-- HEADER -->
+            <div class="header-row">
+
+                <!-- LEFT: Company -->
+                <div class="left-header">
+                    <div class="logo">
+                        <?php if(!empty($settings_info->logo)): ?>
+                            <img src="<?php echo htmlspecialchars($settings_info->logo); ?>" alt="logo">
+                        <?php else: ?>
+                            <!-- placeholder logo -->
+                            <div style="font-size:11px;color:#666;text-align:center;">LOGO</div>
+                        <?php endif; ?>
+                    </div>
+                    <div>
+                        <div class="company-title">
+                            <?php echo htmlspecialchars($settings_info->title); ?>
+                        </div>
+                        <div class="company-info">
+                            <?php echo nl2br(htmlspecialchars($settings_info->address)); ?><br>
+                            Telp: <?php echo htmlspecialchars($settings_info->phone); ?><br>
+                            CDOB: <?php echo htmlspecialchars($settings_info->cdob); ?><br>
+                            NPWP: <?php echo htmlspecialchars($settings_info->npwp); ?><br>
+                            Izin PBF: <?php echo htmlspecialchars($settings_info->izin_pbf); ?>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Textbox -->
+                <div class="right-header">
+                    Tanggal: <?php $dateTime = new DateTime($invoice->date); echo htmlspecialchars($dateTime->format('d/m/Y H:i:s')); ?><br>
+                    Kepada: <?php echo htmlspecialchars($invoice->customer_name); ?><br>
+                    NPWP: <?php echo htmlspecialchars($invoice->customer_npwp); ?><br>
+                    Tanggal SP: <?php $requestDate = new DateTime($invoice->request_date); echo htmlspecialchars($requestDate->format('d/m/Y')); ?>
+                </div>
+
+                <!-- CENTER: Fraktur -->
+                <div class="center-header">
+                    Fraktur: <?php echo htmlspecialchars($invoice->invoice); ?>
+                </div>
+            </div>
+
+            <!-- ITEMS TABLE -->
+            <table class="items" cellpadding="0" cellspacing="0">
                 <thead>
                     <tr>
-                    	 <th class="px-0 bg-transparent border-top-0">
-                            <span class="h6 font-weight-bold"><?php echo lan('sl_no')?></span>
-                        </th>
-                        <th class="px-0 bg-transparent border-top-0">
-                            <span class="h6 font-weight-bold"><?php echo lan('medicine_name')?></span>
-                        </th>
-                        <th class="px-0 bg-transparent border-top-0">
-                            <span class="h6 font-weight-bold"><?php echo lan('quantity')?></span>
-                        </th>
-                        <th class="px-0 bg-transparent border-top-0 text-right">
-                            <span class="h6 font-weight-bold"><?php echo lan('price')?></span>
-                        </th>
-                         <?php if($total_dis > 0){?>
-                         <th class="px-0 bg-transparent border-top-0 text-right"><span class="h6 font-weight-bold"><?php echo lan('discount')?></span></th>
-                            <?php }?>
-                         <th class="px-0 bg-transparent border-top-0 text-right">
-                            <span class="h6 font-weight-bold"><?php echo lan('total_amount')?></span>
-                        </th>
+                        <th style="width:8%;">PBR.CODE</th>
+                        <th style="width:9%;">BATCH</th>
+                        <th style="width:7%;">E D</th>
+                        <th style="width:7%;">Q T Y</th>
+                        <th style="width:40%;">NAMA BARANG</th>
+                        <th style="width:10%;">HARGA</th>
+                        <th style="width:7%;">DISC</th>
+                        <th style="width:12%;">SUB TOTAL</th>
                     </tr>
                 </thead>
                 <tbody>
-                	<?php
-                	  $sum_total = 0;
-                	 if($details){
-                		$sl = 1;
-                		foreach($details as $details){?>
+                    <?php
+                    // render rows from $details; keep a fixed count of rows for consistent print layout (e.g., 12 rows)
+                    $max_rows = 12;
+                    $i = 0;
+                    foreach($details as $d):
+                        $i++;
+                        $pbr   = $d['pbr_code'] ?? '-';
+                        $batch = $d['batch_id'] ?? '-';
+                        $ed    = $d['ed'] ?? ($d['expeire_date'] ?? '-');
+                        $qty   = isset($d['quantity']) ? $d['quantity'] : ($d['qty'] ?? 0);
+                        $name  = ($d['product_name'] ?? ($d['nama_barang'] ?? 'nama_barang')) . (isset($d['strength']) ? ' ('.$d['strength'].')' : '');
+                        $rate  = isset($d['rate']) ? $d['rate'] : ($d['harga'] ?? 0);
+                        $disc  = isset($d['discount']) ? $d['discount'] : ($d['disc'] ?? 0);
+                        $subtotal_line = isset($d['total_price']) ? $d['total_price'] : ($rate * ($qty?:1) - $disc);
+                        $rate_label = money($rate, $settings_info->currency);
+                        $subtotal_label = money($subtotal_line, $settings_info->currency);
+                    ?>
                     <tr>
-                    	<td class="px-0"><?php echo $sl++;?></td>
-                        <td class="px-0">
-                            <?php echo esc($details['product_name']).' ('.esc($details['strength']).')'?>
-                        </td>
-                        <td class="px-0">
-                            <?php echo esc($details['quantity'])?>
-                        </td>
-                        <td class="px-0 text-right">
-                           <?php echo esc($details['rate'])?>
-                        </td>
+                        <td><?php echo htmlspecialchars($pbr); ?></td>
+                        <td><?php echo htmlspecialchars($batch); ?></td>
+                        <td><?php $EXPdate = new DateTime($ed); echo htmlspecialchars($EXPdate->format('d/m/Y')); ?></td>
+                        <td><?php echo htmlspecialchars($qty); ?></td>
+                        <td class="left"><?php echo htmlspecialchars($name); ?></td>
+                        <td class="text-right"><?php echo $rate_label; ?></td>
+                        <td class="text-right"><?php echo is_numeric($disc) ? number_format((float)$disc,0,',','.') : htmlspecialchars($disc); ?>%</td>
+                        <td class="text-right"><?php echo $subtotal_label; ?></td>
+                    </tr>
+                    <?php endforeach; ?>
 
-                          <?php if($total_dis > 0){?>
-                                <td class="px-0 text-right"><?php echo esc($details['discount'])?></td>
-                                     <?php }?>
-                        <td class="px-0 text-right">
-                            <?php echo esc($details['total_price']);
-                              $sum_total += $details['total_price'];
-                            ?>
-                        </td>
-                    </tr>
-                <?php }}?>
-                   
+                    <?php
+                    // fill remaining empty rows until max_rows
+                    for($j = $i; $j < $max_rows; $j++): ?>
                     <tr>
-                        <td class="px-0 border-top border-top-2 text-right" colspan="<?php echo 4+$colspan ?>">
-                            <strong><?php echo lan('sub_total')?></strong>
-                        </td>
-                        <td class="px-0 text-right border-top border-top-2">
-                            <span class="fs-16 font-weight-600">
-                               <?php echo number_format($sum_total,2);?>
-                            </span>
-                        </td>
+                        <td>&nbsp;</td><td></td><td></td><td></td><td class="left"></td><td></td><td></td><td></td>
                     </tr>
-                    <?php if($invoice->invoice_discount > 0){?>
-                    <tr>
-                        <td class="px-0 border-top border-top-2 text-right" colspan="<?php echo 4+$colspan ?>">
-                            <strong><?php echo lan('invoice_discount')?></strong>
-                        </td>
-                        <td class="px-0 text-right border-top border-top-2">
-                            <span class="fs-16 font-weight-600">
-                               <?php echo esc($invoice->invoice_discount);?>
-                            </span>
-                        </td>
-                    </tr>
-                <?php }?>
+                    <?php endfor; ?>
 
-                      <?php if($invoice->prevous_due > 0){?>
-                    <tr>
-                        <td class="px-0 border-top border-top-2 text-right" colspan="<?php echo 4+$colspan ?>">
-                            <strong><?php echo lan('previous')?></strong>
-                        </td>
-                        <td class="px-0 text-right border-top border-top-2">
-                            <span class="fs-16 font-weight-600">
-                               <?php echo esc($invoice->prevous_due);?>
-                            </span>
-                        </td>
-                    </tr>
-                <?php }?>
-
-                      <?php if($invoice->total_tax > 0){?>
-                    <tr>
-                        <td class="px-0 border-top border-top-2 text-right" colspan="<?php echo 4+$colspan ?>">
-                            <strong><?php echo lan('total_vat')?></strong>
-                        </td>
-                        <td class="px-0 text-right border-top border-top-2">
-                            <span class="fs-16 font-weight-600">
-                               <?php echo esc($invoice->total_tax);?>
-                            </span>
-                        </td>
-                    </tr>
-                <?php }?>
-                    <tr>
-                        <td class="px-0 border-top border-top-2 text-right" colspan="<?php echo 4+$colspan ?>">
-                            <strong><?php echo lan('grand_total')?></strong>
-                        </td>
-                        <td class="px-0 text-right border-top border-top-2">
-                            <span class="fs-16 font-weight-600">
-                               <?php echo esc($invoice->total_amount);?>
-                            </span>
-                        </td>
-                    </tr>
-                    <?php if($invoice->paid_amount >0){?>
-                     <tr>
-                        <td class="px-0 border-top border-top-2 text-right" colspan="<?php echo 4+$colspan ?>">
-                            <strong><?php echo lan('paid_amount')?></strong>
-                        </td>
-                        <td class="px-0 text-right border-top border-top-2">
-                            <span class="fs-16 font-weight-600">
-                               <?php echo esc($invoice->paid_amount);?>
-                            </span>
-                        </td>
-                    </tr>
-                <?php }?>
-                <?php if($invoice->due_amount >0){?>
-                     <tr>
-                        <td class="px-0 border-top border-top-2 text-right" colspan="<?php echo 4+$colspan ?>">
-                            <strong><?php echo lan('due_amount')?></strong>
-                        </td>
-                        <td class="px-0 text-right border-top border-top-2">
-                            <span class="fs-16 font-weight-600">
-                               <?php echo esc($invoice->due_amount);?>
-                            </span>
-                        </td>
-                    </tr>
-                <?php }?>
                 </tbody>
             </table>
+
+            <!-- FOOTER -->
+            <div class="footer-area">
+
+                <!-- LEFT: Penerima (centered within its block) -->
+                <div class="left-footer">
+                    <p><strong>Penerima</strong></p><br><br><br>
+                    <p>( ................................................. )</p>
+                    <p>Nama Terang</p>
+                </div>
+
+                <!-- CENTER: Hormat Kami -->
+                <div class="center-footer">
+                    <p><strong><?php echo $invoice_details; ?></strong></p>
+                </div>
+
+                <!-- RIGHT: Sub Total, DPP, PPN, Garis, Total -->
+                <div class="right-footer">
+                    <?php
+                        // compute summary values (prefer backend $invoice if available)
+                        $computed_subtotal = $total;
+                        $display_subtotal = isset($invoice->subtotal) && $invoice->subtotal>0 ? $invoice->subtotal : $computed_subtotal;
+                        $display_deemed_value = isset($invoice->deemed_value) ? $invoice->deemed_value : $deemed_value;
+                        $display_ppn = isset($invoice->total_tax) ? $invoice->total_tax : $ppn_amount;
+                        $display_total = isset($invoice->total_amount) && $invoice->total_amount>0 ? $invoice->total_amount : ($display_subtotal + $display_deemed_value + $display_ppn);
+                    ?>
+                    <p>Sub Total: <?php echo money($display_subtotal, $settings_info->currency); ?></p>
+                    <p>DPP Nilai Lain: <?php echo money($display_deemed_value, $settings_info->currency); ?></p>
+                    <p>PPN: <?php echo money($display_ppn, $settings_info->currency); ?></p>
+                    <span class="line"></span>
+                    <p><strong>Total: <?php echo money($display_total, $settings_info->currency); ?></strong></p>
+                </div>
+
+            </div>
+
+            <!-- Optional: commented barcode (keputusan Anda: jangan hapus, hanya comment) -->
+            <?php
+            /*
+            // Barcode disabled - keep for future use
+            // Example using Picqer\Barcode\BarcodeGeneratorPNG
+            // $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
+            // echo '<div style="text-align:center;margin-top:8px;"><img src="data:image/png;base64,' . base64_encode($generator->getBarcode($invoice->invoice, $generator::TYPE_CODE_128)) . '" alt="barcode"/></div>';
+            */
+            ?>
+
         </div>
-        <hr class="my-5">
-        <h6 class="text-uppercase font-weight-bold">Comments </h6>
-        <p class="text-muted mb-0">
-            thank you
-        </p>
-    </div>
-</div>
-</div>
-</div>
- </div>
+    </body>
 </div>

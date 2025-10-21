@@ -16,7 +16,7 @@ $main->invoice                 = $main->invoice ?? '0000';
 $main->date                    = $main->date ?? '';
 $main->customer_name           = $main->customer_name ?? '';
 $main->customer_npwp           = $main->customer_npwp ?? '-';
-$main->tanggal_surat_pesanan   = $main->tanggal_surat_pesanan ?? '';
+$main->request_date            = $main->request_date ?? '';
 $main->sales_by_firstname      = $main->sales_by_firstname ?? 'Sales';
 $main->sales_by_lastname       = $main->sales_by_lastname ?? '';
 $main->total_discount          = $main->total_discount ?? 0;
@@ -26,6 +26,7 @@ $main->prevous_due             = $main->prevous_due ?? 0;
 $main->total_amount            = $main->total_amount ?? 0;
 $main->paid_amount             = $main->paid_amount ?? 0;
 $main->due_amount              = $main->due_amount ?? 0;
+$main->invoice_details         = $main->invoice_details ?? 'Hormat kami';
 
 // ========== Perhitungan ringkasan (fallback jika backend belum memberikan) ==========
 $total = 0;
@@ -37,9 +38,9 @@ foreach($details as $d){
 }
 // Jika main sudah punya nilai, prioritaskan nilai backend
 $subtotal = $main->total_amount && $main->total_amount>0 ? ($main->total_amount - $main->total_tax) : $total;
-$other_dpp = $main->other_dpp ?? 0; // nilai lain
+$deemed_value = $main->deemed_value ?? 0; // nilai lain
 $ppn_amount = $main->total_tax ?? 0;
-$grand_total = $main->total_amount && $main->total_amount>0 ? $main->total_amount : ($subtotal + $other_dpp + $ppn_amount);
+$grand_total = $main->total_amount && $main->total_amount>0 ? $main->total_amount : ($subtotal + $deemed_value + $ppn_amount);
 
 // Helper currency format
 function money($val, $currency='Rp'){
@@ -241,7 +242,7 @@ function money($val, $currency='Rp'){
             Tanggal: <?php $dateTime = new DateTime($main->date); echo htmlspecialchars($dateTime->format('d/m/Y H:i:s')); ?><br>
             Kepada: <?php echo htmlspecialchars($main->customer_name); ?><br>
             NPWP: <?php echo htmlspecialchars($main->customer_npwp); ?><br>
-            Tanggal SP: <?php echo htmlspecialchars($main->tanggal_surat_pesanan); ?>
+            Tanggal SP: <?php $requestDate = new DateTime($main->request_date); echo htmlspecialchars($requestDate->format('d/m/Y')); ?>
         </div>
 
         <!-- CENTER: Fraktur -->
@@ -317,7 +318,7 @@ function money($val, $currency='Rp'){
 
         <!-- CENTER: Hormat Kami -->
         <div class="center-footer">
-            <p><strong>Hormat Kami</strong></p>
+            <p><strong><?php echo $invoice_details; ?></strong></p>
         </div>
 
         <!-- RIGHT: Sub Total, DPP, PPN, Garis, Total -->
@@ -326,12 +327,12 @@ function money($val, $currency='Rp'){
                 // compute summary values (prefer backend $main if available)
                 $computed_subtotal = $total;
                 $display_subtotal = isset($main->subtotal) && $main->subtotal>0 ? $main->subtotal : $computed_subtotal;
-                $display_dpp_other = isset($main->other_dpp) ? $main->other_dpp : $other_dpp;
+                $display_deemed_value = isset($main->deemed_value) ? $main->deemed_value : $deemed_value;
                 $display_ppn = isset($main->total_tax) ? $main->total_tax : $ppn_amount;
-                $display_total = isset($main->total_amount) && $main->total_amount>0 ? $main->total_amount : ($display_subtotal + $display_dpp_other + $display_ppn);
+                $display_total = isset($main->total_amount) && $main->total_amount>0 ? $main->total_amount : ($display_subtotal + $display_deemed_value + $display_ppn);
             ?>
             <p>Sub Total: <?php echo money($display_subtotal, $company->currency); ?></p>
-            <p>DPP Nilai Lain: <?php echo money($display_dpp_other, $company->currency); ?></p>
+            <p>DPP Nilai Lain: <?php echo money($display_deemed_value, $company->currency); ?></p>
             <p>PPN: <?php echo money($display_ppn, $company->currency); ?></p>
             <span class="line"></span>
             <p><strong>Total: <?php echo money($display_total, $company->currency); ?></strong></p>

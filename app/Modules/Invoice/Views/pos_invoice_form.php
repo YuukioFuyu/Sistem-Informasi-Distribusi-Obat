@@ -131,9 +131,9 @@
             <div class="footer">
                 <div class="form-group mb-1">
                     <div class="row justify-content-end align-items-center">
-                        <label for="other_dpp" class="col-5 col-sm-6 col-lg-6 col-xl-7 text-right font-weight-bold mb-0">DPP Nilai Lain:</label>
+                        <label for="deemed_value" class="col-5 col-sm-6 col-lg-6 col-xl-7 text-right font-weight-bold mb-0">DPP Nilai Lain:</label>
                         <div class="col-5 col-sm-5 col-lg-5 col-xl-3">
-                            <input type="text" class="form-control form-control-sm text-right dppr valid_number" id="other_dpp" name="other_dpp" placeholder="0.00" onkeyup="calculateSum_pos()" onchange="calculateSum_pos()" />
+                            <input type="text" class="form-control form-control-sm text-right dppr valid_number" id="deemed_value" name="deemed_value" placeholder="0.00" onkeyup="calculateSum_pos()" onchange="calculateSum_pos()" />
                         </div>
                         <div class="col-2 col-sm-1"></div>
                     </div>
