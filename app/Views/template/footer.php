@@ -1,6 +1,12 @@
   <footer class="footer-content">
                     <div class="footer-text d-flex align-items-center justify-content-between">
-                        <div class="copy"><?php echo $settings_info->footer_text;?></div>
+                        <div class="copy">
+                            Copyright &copy; 2025 - <?= date('Y'); ?> 
+                            <a href="https://yuuki0.net" target="_blank">Yuukio Fuyu</a>. All Rights Reserved
+                            <?php if (!empty($settings_info->footer_text)): ?>
+                                | <?php echo $settings_info->footer_text; ?>
+                            <?php endif; ?>
+                        </div>
                         <div class="credit"></div>
                     </div>
                     <input type="hidden" name="" id="base_url" value="<?php echo base_url();?>">
