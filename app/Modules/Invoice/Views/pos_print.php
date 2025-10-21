@@ -64,7 +64,7 @@ function money($val, $currency='Rp'){
     .container {
         width: 210mm;
         height: 297mm;
-        padding: 18mm 3mm;
+        padding: 3mm 3mm;
         box-sizing: border-box;
         position: relative;
         color: #000;
@@ -84,8 +84,8 @@ function money($val, $currency='Rp'){
         max-width: 46%;
     }
     .logo {
-        width: 85px;
-        height: 85px;
+        width: 88px;
+        height: 88px;
         background: #f0f0f0;
         margin-right: 12px;
         display:flex;
@@ -170,7 +170,7 @@ function money($val, $currency='Rp'){
 
     .left-footer {
         position: absolute;
-        bottom: 0;
+        top: 0;
         left: 0;
         width: 32%;
         text-align: center;
@@ -189,7 +189,7 @@ function money($val, $currency='Rp'){
 
     .right-footer {
         position: absolute;
-        bottom: 50px;
+        top: 0;
         right: 0;
         width: 28%;
         font-size: 13px;
