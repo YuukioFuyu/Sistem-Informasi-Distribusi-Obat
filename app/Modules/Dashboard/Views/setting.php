@@ -46,21 +46,21 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="npwp" class="col-sm-3 col-form-label"><?php echo lan('npwp') ?></label>
+                        <label for="tin" class="col-sm-3 col-form-label"><?php echo lan('tin') ?></label>
                         <div class="col-sm-9">
-                            <input name="npwp" type="text" class="form-control" id="npwp" placeholder="<?php echo lan('npwp') ?>"  value="<?php echo $setting->npwp ?>" >
+                            <input name="tin" type="text" class="form-control" id="tin" placeholder="<?php echo lan('tin') ?>"  value="<?php echo $setting->tin ?>" >
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="cdob" class="col-sm-3 col-form-label"><?php echo lan('cdob') ?></label>
+                        <label for="gdp" class="col-sm-3 col-form-label"><?php echo lan('gdp') ?></label>
                         <div class="col-sm-9">
-                            <input name="cdob" type="text" class="form-control" id="cdob" placeholder="<?php echo lan('cdob') ?>"  value="<?php echo $setting->cdob ?>" >
+                            <input name="gdp" type="text" class="form-control" id="gdp" placeholder="<?php echo lan('gdp') ?>"  value="<?php echo $setting->gdp ?>" >
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="pbf" class="col-sm-3 col-form-label"><?php echo lan('pbf') ?></label>
+                        <label for="pbd" class="col-sm-3 col-form-label"><?php echo lan('pbd') ?></label>
                         <div class="col-sm-9">
-                            <input name="pbf" type="text" class="form-control" id="pbf" placeholder="<?php echo lan('pbf') ?>"  value="<?php echo $setting->pbf ?>" >
+                            <input name="pbd" type="text" class="form-control" id="pbd" placeholder="<?php echo lan('pbd') ?>"  value="<?php echo $setting->pbd ?>" >
                         </div>
                     </div>
                      <?php if(!empty($setting->favicon)) {  ?>

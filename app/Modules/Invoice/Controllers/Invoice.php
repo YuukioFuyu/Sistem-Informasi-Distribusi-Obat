@@ -173,7 +173,7 @@ class Invoice extends BaseController
         $walking_customer       = $this->invoiceModel->pos_customer_setup();
         $data['customer_id']    = ($walking_customer?$walking_customer[0]['customer_id']:'');
         $data['customer_name']  = ($walking_customer?$walking_customer[0]['customer_name']:'');
-        $data['customer_npwp']  = ($walking_customer?$walking_customer[0]['customer_npwp']:'');
+        $data['customer_tin']  = ($walking_customer?$walking_customer[0]['customer_tin']:'');
         $data['product_list']   = $this->invoiceModel->medicine_list();
         $data['bank_list']      = $this->invoiceModel->bank_list();
         $data['categorylist']   = $this->invoiceModel->category_list();

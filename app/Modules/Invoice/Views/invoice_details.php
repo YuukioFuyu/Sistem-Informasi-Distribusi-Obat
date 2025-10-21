@@ -24,16 +24,16 @@
         $settings_info->phone   = $settings_info->phone   ?? '-';
         $settings_info->logo    = $settings_info->logo    ?? '';
         $settings_info->currency= $settings_info->currency?? '';
-        $settings_info->npwp    = $settings_info->npwp    ?? '-';
-        $settings_info->cdob    = $settings_info->cdob    ?? '-';
-        $settings_info->izin_pbf= $settings_info->izin_pbf?? '-';
+        $settings_info->tin     = $settings_info->tin     ?? '-';
+        $settings_info->gdp     = $settings_info->gdp     ?? '-';
+        $settings_info->pbd     = $settings_info->pbd     ?? '-';
 
         // Main invoice / fraktur
         $invoice = $invoice ?? new stdClass();
         $invoice->invoice                 = $invoice->invoice ?? '0000';
         $invoice->date                    = $invoice->date ?? '';
         $invoice->customer_name           = $invoice->customer_name ?? '';
-        $invoice->customer_npwp           = $invoice->customer_npwp ?? '-';
+        $invoice->customer_tin           = $invoice->customer_tin ?? '-';
         $invoice->request_date            = $invoice->request_date ?? '';
         $invoice->sales_by_firstname      = $invoice->sales_by_firstname ?? 'Sales';
         $invoice->sales_by_lastname       = $invoice->sales_by_lastname ?? '';
@@ -259,9 +259,9 @@
                         <div class="company-info">
                             <?php echo nl2br(htmlspecialchars($settings_info->address)); ?><br>
                             Telp: <?php echo htmlspecialchars($settings_info->phone); ?><br>
-                            CDOB: <?php echo htmlspecialchars($settings_info->cdob); ?><br>
-                            NPWP: <?php echo htmlspecialchars($settings_info->npwp); ?><br>
-                            Izin PBF: <?php echo htmlspecialchars($settings_info->izin_pbf); ?>
+                            CDOB: <?php echo htmlspecialchars($settings_info->gdp); ?><br>
+                            NPWP: <?php echo htmlspecialchars($settings_info->tin); ?><br>
+                            Izin PBF: <?php echo htmlspecialchars($settings_info->pbd); ?>
                         </div>
                     </div>
                 </div>
@@ -270,7 +270,7 @@
                 <div class="right-header">
                     Tanggal: <?php $dateTime = new DateTime($invoice->date); echo htmlspecialchars($dateTime->format('d/m/Y H:i:s')); ?><br>
                     Kepada: <?php echo htmlspecialchars($invoice->customer_name); ?><br>
-                    NPWP: <?php echo htmlspecialchars($invoice->customer_npwp); ?><br>
+                    NPWP: <?php echo htmlspecialchars($invoice->customer_tin); ?><br>
                     Tanggal SP: <?php $requestDate = new DateTime($invoice->request_date); echo htmlspecialchars($requestDate->format('d/m/Y')); ?>
                 </div>
 

@@ -843,7 +843,7 @@ return $product_information;
 
  public function invoice_main($invoice_id){
    return  $details_info = $this->db->table('invoice a')
-            ->select('a.*,c.customer_name,c.customer_npwp,d.firstname,d.lastname')
+            ->select('a.*,c.customer_name,c.customer_tin,d.firstname,d.lastname')
             ->join('customer_information c','a.customer_id=c.customer_id','left')
             ->join('user d','a.sales_by=d.id')
             ->where('a.invoice_id',$invoice_id)

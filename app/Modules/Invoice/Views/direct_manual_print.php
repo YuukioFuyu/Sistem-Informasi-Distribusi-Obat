@@ -6,16 +6,16 @@ $company->address = $company->address ?? '-';
 $company->phone   = $company->phone   ?? '-';
 $company->logo    = $company->logo    ?? '';
 $company->currency= $company->currency?? '';
-$company->npwp    = $company->npwp    ?? '-';
-$company->cdob    = $company->cdob    ?? '-';
-$company->izin_pbf= $company->izin_pbf?? '-';
+$company->tin     = $company->tin     ?? '-';
+$company->gdp     = $company->gdp     ?? '-';
+$company->pbd     = $company->pbd     ?? '-';
 
 // Main invoice / fraktur
 $invoice = $invoice ?? new stdClass();
 $invoice->invoice                 = $invoice->invoice ?? '0000';
 $invoice->date                    = $invoice->date ?? '';
 $invoice->customer_name           = $invoice->customer_name ?? '';
-$invoice->customer_npwp           = $invoice->customer_npwp ?? '-';
+$invoice->customer_tin            = $invoice->customer_tin ?? '-';
 $invoice->request_date            = $invoice->request_date ?? '';
 $invoice->sales_by_firstname      = $invoice->sales_by_firstname ?? 'Sales';
 $invoice->sales_by_lastname       = $invoice->sales_by_lastname ?? '';
@@ -230,9 +230,9 @@ function money($val, $currency='Rp'){
                 <div class="company-info">
                     <?php echo nl2br(htmlspecialchars($company->address)); ?><br>
                     Telp: <?php echo htmlspecialchars($company->phone); ?><br>
-                    CDOB: <?php echo htmlspecialchars($company->cdob); ?><br>
-                    NPWP: <?php echo htmlspecialchars($company->npwp); ?><br>
-                    Izin PBF: <?php echo htmlspecialchars($company->izin_pbf); ?>
+                    CDOB: <?php echo htmlspecialchars($company->gdp); ?><br>
+                    NPWP: <?php echo htmlspecialchars($company->tin); ?><br>
+                    Izin pbd: <?php echo htmlspecialchars($company->izin_pbd); ?>
                 </div>
             </div>
         </div>
@@ -241,7 +241,7 @@ function money($val, $currency='Rp'){
         <div class="right-header">
             Tanggal: <?php $dateTime = new DateTime($invoice->date); echo htmlspecialchars($dateTime->format('d/m/Y H:i:s')); ?><br>
             Kepada: <?php echo htmlspecialchars($invoice->customer_name); ?><br>
-            NPWP: <?php echo htmlspecialchars($invoice->customer_npwp); ?><br>
+            NPWP: <?php echo htmlspecialchars($invoice->customer_tin); ?><br>
             Tanggal SP: <?php $requestDate = new DateTime($invoice->request_date); echo htmlspecialchars($requestDate->format('d/m/Y')); ?>
         </div>
 
