@@ -35,11 +35,10 @@ class Customer extends BaseController
            $data['customer'] = (object)$userLevelData = array(
             'customer_id'      => ($this->request->getVar('customer_id')?$this->request->getVar('customer_id'):''),
             'customer_name'    => $this->request->getVar('customer_name', FILTER_SANITIZE_STRING),
+            'customer_tin'     => $this->request->getVar('customer_tin', FILTER_SANITIZE_STRING),
             'customer_mobile'  => $this->request->getVar('customer_mobile', FILTER_SANITIZE_STRING),
             'customer_email'   => $this->request->getVar('customer_email', FILTER_SANITIZE_STRING),
             'email_address'    => $this->request->getVar('email_address', FILTER_SANITIZE_STRING),
-            'contact'          => $this->request->getVar('contact', FILTER_SANITIZE_STRING),
-            'phone'            => $this->request->getVar('phone', FILTER_SANITIZE_STRING),
             'fax'              => $this->request->getVar('fax', FILTER_SANITIZE_STRING), 
             'city'             => $this->request->getVar('city', FILTER_SANITIZE_STRING) ,
             'state'            => $this->request->getVar('state', FILTER_SANITIZE_STRING) ,

@@ -25,13 +25,13 @@
                             <tr>
                             <th><?php echo lan('sl_no') ?></th>
                             <th width="220px;"><?php echo lan('customer_name') ?></th>
-                            <th width="90px;"><?php echo lan('address1'); ?></th>
-                            <th><?php echo lan('mobile_no') ?></th>
+                            <th width="90px;"><?php echo lan('customer_tin'); ?></th>
+                            <th><?php echo lan('address1') ?></th>
+                            <th><?php echo lan('mobile_no'); ?></th>
                             <th><?php echo lan('email'); ?></th>
                             <th><?php echo lan('city'); ?></th>
                             <th><?php echo lan('state'); ?></th>
                             <th><?php echo lan('zip'); ?></th>
-                            <th><?php echo lan('country'); ?></th>
                             <th><?php echo lan('balance') ?></th>
                             <th width="30px;"><?php echo lan('action') ?>
                               

@@ -35,42 +35,22 @@
                         </div>
                        
                     </div>
-                     <label for="customer_mobile" class="col-md-2 text-right col-form-label"><?php echo lan('mobile_no')?> <i class="text-danger"> * </i>:</label>
+                     <label for="customer_tin" class="col-md-2 text-right col-form-label"><?php echo lan('customer_tin')?>:</label>
                     <div class="col-md-4">
                         <div class="">
-                           
-                            <input type="text" name="customer_mobile" class="form-control input-mask-trigger text-left valid_number" id="customer_mobile" placeholder="<?php echo lan('mobile_no')?>" value="<?php echo $customer->customer_mobile?>" data-inputmask="'alias': 'decimal', 'groupSeparator': '', 'autoGroup': true" im-insert="true">
-
-                        </div>
-                       
-                    </div>
-                </div>
-                 <div class="form-group row">
-                    <label for="customer_email" class="col-md-2 text-right col-form-label"><?php echo lan('email_address')?>1:</label>
-                    <div class="col-md-4">
-                        <div class="">
-                           
-                            <input type="email" class="form-control input-mask-trigger" name="customer_email" id="email" data-inputmask="'alias': 'email'" im-insert="true" placeholder="<?php echo lan('email')?>" value="<?php echo $customer->customer_email?>">
-
-                        </div>
-                       
-                    </div>
-                      <label for="email_address" class="col-md-2 text-right col-form-label"><?php echo lan('email_address')?>2:</label>
-                    <div class="col-md-4">
-                        <div class="">
-                           
-                            <input type="text" class="form-control" name="email_address" id="email_address" placeholder="<?php echo lan('email_address')?>" value="<?php echo $customer->email_address?>">
+                            
+                          <input type="text" name="customer_tin" class="form-control input-mask-trigger text-left" id="customer_tin" placeholder="<?php echo lan('customer_tin')?>" data-inputmask="'alias': 'decimal', 'groupSeparator': '', 'autoGroup': true" im-insert="true" value="<?php echo $customer->customer_tin?>">
 
                         </div>
                        
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="phone" class="col-md-2 text-right col-form-label"><?php echo lan('phone')?>:</label>
+                     <label for="customer_mobile" class="col-md-2 text-right col-form-label"><?php echo lan('mobile_no')?> <i class="text-danger"> * </i>:</label>
                     <div class="col-md-4">
                         <div class="">
-                            
-                          <input class="form-control input-mask-trigger text-left" id="phone" type="number" name="phone" placeholder="<?php echo lan('phone')?>" data-inputmask="'alias': 'decimal', 'groupSeparator': '', 'autoGroup': true" im-insert="true" value="<?php echo $customer->phone?>">
+                           
+                            <input type="text" name="customer_mobile" class="form-control input-mask-trigger text-left valid_number" id="customer_mobile" placeholder="<?php echo lan('mobile_no')?>" value="<?php echo $customer->customer_mobile?>" data-inputmask="'alias': 'decimal', 'groupSeparator': '', 'autoGroup': true" im-insert="true">
 
                         </div>
                        
@@ -81,6 +61,26 @@
                         <div class="">
                             
                           <input class="form-control"  id="contact" type="text" name="contact" placeholder="<?php echo lan('contact')?>" value="<?php echo $customer->contact?>">
+
+                        </div>
+                       
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="customer_email" class="col-md-2 text-right col-form-label"><?php echo lan('email_address')?> 1:</label>
+                    <div class="col-md-4">
+                        <div class="">
+                           
+                            <input type="email" class="form-control input-mask-trigger" name="customer_email" id="email" data-inputmask="'alias': 'email'" im-insert="true" placeholder="<?php echo lan('email')?>" value="<?php echo $customer->customer_email?>">
+
+                        </div>
+                       
+                    </div>
+                      <label for="email_address" class="col-md-2 text-right col-form-label"><?php echo lan('email_address')?> 2:</label>
+                    <div class="col-md-4">
+                        <div class="">
+                           
+                            <input type="text" class="form-control" name="email_address" id="email_address" placeholder="<?php echo lan('email_address')?>" value="<?php echo $customer->email_address?>">
 
                         </div>
                        
