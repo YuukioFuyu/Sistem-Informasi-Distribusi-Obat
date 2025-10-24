@@ -18,6 +18,13 @@
             .bg-img-hero { 
        background-image: url(<?php echo  base_url(($settingsdata->login_background?$settingsdata->login_background:'assets/dist/css/abstract-bg-4.jpg'));?>);
        }
+            .font-title-hero { 
+       font-size: 3rem;
+       }
+            .font-company-hero { 
+       font-size: 1.2rem;
+       font-weight: 500;
+       }
         </style>
         <!--<meta name="google-site-verification" content="LxSA3ttvzYDSDZMFAw-pvd3YRQ_lJbIYVRfBdVsZYMc" />-->
     </head>
@@ -32,8 +39,14 @@
 
             <!-- Content -->
             <div class="container py-5 py-sm-7">
-                <a class="d-flex justify-content-center mb-5 pharmacare-logo" href="javascript:void(0)">
-                    <img class="z-index-2" src="<?php echo  base_url($settingsdata->logo);?>" alt="Image Description">
+                <a class="d-flex flex-column justify-content-center align-items-center mb-5 pharmacare-logo text-decoration-none" href="javascript:void(0)">
+                    <img class="z-index-2 mb-3" src="<?php echo  base_url($settingsdata->logo);?>" alt="Image Description">
+                    <h1 class="z-index-2 font-title-hero text-center font-weight-bold text-dark">
+                        <?php echo  $settingsdata->menu_title;?>
+                    </h1>
+                    <h5 class="z-index-2 font-company-hero text-center text-muted">
+                        <?php echo $settingsdata->title; ?>
+                    </h5>
                 </a>
                 <div class="row justify-content-center">
                     <div class="col-md-7 col-lg-5">
