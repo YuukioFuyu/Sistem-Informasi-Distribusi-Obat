@@ -52,46 +52,61 @@ class StockModel
          $totalRecordwithFilter = $records->allcount;
         ## Fetch records
           $builder3 = $this->db->table('product_information a');
-          $builder3->select("a.*,
-                a.product_name,
-                a.product_id,
-                a.strength,
-                a.manufacturer_price,
-                a.box_size,
-                m.manufacturer_name,((select ifnull(sum(quantity),0) from product_purchase_details where product_id= `a`.`product_id`)-(select ifnull(sum(quantity),0) from invoice_details where product_id= `a`.`product_id`) + (select ifnull(sum(ret_qty),0) from product_return where product_id= `a`.`product_id` AND usablity = 1) - (select ifnull(sum(ret_qty),0) from product_return where product_id= `a`.`product_id` AND usablity = 2)) as 'stock',(select ifnull(sum(quantity),0) from product_purchase_details where product_id= `a`.`product_id`) as 'total_in',(select ifnull(sum(quantity),0) from invoice_details where product_id= `a`.`product_id`) as 'total_out',(select ifnull(sum(ret_qty),0) from product_return where product_id= `a`.`product_id` AND usablity = 2) as 'total_purchase_return',(select ifnull(sum(ret_qty),0) from product_return where product_id= `a`.`product_id` AND usablity = 1) as 'total_sale_return'
-                ");
+          $builder3->select("
+              a.*,
+              a.product_name,
+              a.product_id,
+              a.strength,
+              a.manufacturer_price,
+              a.box_size,
+              m.manufacturer_name,
+              p.batch_id,
+              ((IFNULL(SUM(p.quantity),0)) 
+                - (SELECT IFNULL(SUM(quantity),0) FROM invoice_details WHERE product_id=a.product_id AND batch_id=p.batch_id)
+                + (SELECT IFNULL(SUM(ret_qty),0) FROM product_return WHERE product_id=a.product_id AND batch_id=p.batch_id AND usablity=1)
+                - (SELECT IFNULL(SUM(ret_qty),0) FROM product_return WHERE product_id=a.product_id AND batch_id=p.batch_id AND usablity=2)
+              ) AS stock,
+              (SELECT IFNULL(SUM(quantity),0) FROM product_purchase_details WHERE product_id=a.product_id AND batch_id=p.batch_id) AS total_in,
+              (SELECT IFNULL(SUM(quantity),0) FROM invoice_details WHERE product_id=a.product_id AND batch_id=p.batch_id) AS total_out,
+              (SELECT IFNULL(SUM(ret_qty),0) FROM product_return WHERE product_id=a.product_id AND batch_id=p.batch_id AND usablity=2) AS total_purchase_return,
+              (SELECT IFNULL(SUM(ret_qty),0) FROM product_return WHERE product_id=a.product_id AND batch_id=p.batch_id AND usablity=1) AS total_sale_return
+          ");
+          $builder3->join('product_purchase_details p', 'p.product_id = a.product_id', 'left');
           $builder3->join('manufacturer_information m','m.manufacturer_id = a.manufacturer_id','left');
-        if($searchValue != ''){
-           $builder3->where($searchQuery);
-               }
-           
-         $builder3->orderBy($columnName, $columnSortOrder);
-         $builder3->limit($rowperpage, $start);
-         $query3   =  $builder3->get();
-         $records  =   $query3->getResult();
-         $data     = array();
-         $sl       = 1;
-        
-         foreach($records as $record ){ 
-                 $button = '';
-          $base_url = base_url();
-               
-            $data[] = array( 
-                'sl'                =>  $sl,
-                'product_name'      =>  $record->product_name.'('.$record->strength.')',
-                'manufacturer_name' =>  $record->manufacturer_name,
-                'strength'          =>  $record->strength,
-                'sales_price'       =>  $record->price,
-                'purchase_p'        =>  $record->manufacturer_price,
-                'totalPurchaseQnty' =>  ($record->total_in?$record->total_in:0) + ($record->total_sale_return?$record->total_sale_return:0),
-                'totalSalesQnty'    =>  ($record->total_out?$record->total_out:0) + ($record->total_purchase_return?$record->total_purchase_return:0),
-                'stok_quantity'     =>  $record->stock,
-                'stock_box'         =>  $record->stock/$record->box_size,
-                'total_sale_price'  =>  $record->stock*number_format($record->price,2),
-                'purchase_total'    =>  $record->stock*number_format($record->manufacturer_price,2),
-            ); 
-            $sl++;
-         }
+
+          if ($searchValue != '') {
+              $builder3->where($searchQuery);
+          }
+
+          $builder3->groupBy('a.product_id');
+          $builder3->groupBy('p.batch_id');
+          $builder3->orderBy($columnName, $columnSortOrder);
+          $builder3->limit($rowperpage, $start);
+
+          $query3 = $builder3->get();
+          $records = $query3->getResult();
+
+          $data = [];
+          $sl = 1;
+
+          foreach($records as $record) {
+              $data[] = [
+                  'sl'                => $sl,
+                  'product_name'      => $record->product_name.'('.$record->strength.')',
+                  'batch_id'          => $record->batch_id,
+                  'manufacturer_name' => $record->manufacturer_name,
+                  'strength'          => $record->strength,
+                  'sales_price'       => $record->price,
+                  'purchase_p'        => $record->manufacturer_price,
+                  'totalPurchaseQnty' => ($record->total_in ?: 0) + ($record->total_sale_return ?: 0),
+                  'totalSalesQnty'    => ($record->total_out ?: 0) + ($record->total_purchase_return ?: 0),
+                  'stok_quantity'     => $record->stock,
+                  'stock_box'         => $record->stock / $record->box_size,
+                  'total_sale_price'  => $record->stock * (float)$record->price,
+                  'purchase_total'    => $record->stock * (float)$record->manufacturer_price,
+              ];
+              $sl++;
+          }
 
          ## Response
          $response = array(
@@ -278,14 +293,26 @@ class StockModel
                 a.strength,
                 a.manufacturer_price,
                 a.box_size,
-                m.manufacturer_name,((select ifnull(sum(quantity),0) from product_purchase_details where product_id= `a`.`product_id`)-(select ifnull(sum(quantity),0) from invoice_details where product_id= `a`.`product_id`) + (select ifnull(sum(ret_qty),0) from product_return where product_id= `a`.`product_id` AND usablity = 1) - (select ifnull(sum(ret_qty),0) from product_return where product_id= `a`.`product_id` AND usablity = 2)) as 'stock',(select ifnull(sum(quantity),0) from product_purchase_details where product_id= `a`.`product_id`) as 'total_in',(select ifnull(sum(quantity),0) from invoice_details where product_id= `a`.`product_id`) as 'total_out',(select ifnull(sum(ret_qty),0) from product_return where product_id= `a`.`product_id` AND usablity = 2) as 'total_purchase_return',(select ifnull(sum(ret_qty),0) from product_return where product_id= `a`.`product_id` AND usablity = 1) as 'total_sale_return'
+                m.manufacturer_name,
+                b.batch_id,
+                ((SELECT IFNULL(SUM(quantity),0) FROM product_purchase_details WHERE product_id=a.product_id AND batch_id=b.batch_id)
+                  - (SELECT IFNULL(SUM(quantity),0) FROM invoice_details WHERE product_id=a.product_id AND batch_id=b.batch_id)
+                  + (SELECT IFNULL(SUM(ret_qty),0) FROM product_return WHERE product_id=a.product_id AND batch_id=b.batch_id AND usablity = 1)
+                  - (SELECT IFNULL(SUM(ret_qty),0) FROM product_return WHERE product_id=a.product_id AND batch_id=b.batch_id AND usablity = 2)
+                ) AS stock,
+                (SELECT IFNULL(SUM(quantity),0) FROM product_purchase_details WHERE product_id=a.product_id AND batch_id=b.batch_id) AS total_in,
+                (SELECT IFNULL(SUM(quantity),0) FROM invoice_details WHERE product_id=a.product_id AND batch_id=b.batch_id) AS total_out,
+                (SELECT IFNULL(SUM(ret_qty),0) FROM product_return WHERE product_id=a.product_id AND batch_id=b.batch_id AND usablity = 2) AS total_purchase_return,
+                (SELECT IFNULL(SUM(ret_qty),0) FROM product_return WHERE product_id=a.product_id AND batch_id=b.batch_id AND usablity = 1) AS 'total_sale_return'
                 ");
+          $builder3->join('product_purchase_details b', 'b.product_id = a.product_id', 'left');
           $builder3->join('manufacturer_information m','m.manufacturer_id = a.manufacturer_id','left');
         if($searchValue != ''){
            $builder3->where($searchQuery);
                }
          $builder3->having('stock > 0');  
          $builder3->orderBy($columnName, $columnSortOrder);
+         $builder3->groupBy('b.batch_id');
          $builder3->limit($rowperpage, $start);
          $query3   =  $builder3->get();
          $records  =   $query3->getResult();
@@ -299,6 +326,7 @@ class StockModel
             $data[] = array( 
                 'sl'                =>  $sl,
                 'product_name'      =>  $record->product_name.'('.$record->strength.')',
+                'batch_id'          =>  $record->batch_id,
                 'manufacturer_name' =>  $record->manufacturer_name,
                 'strength'          =>  $record->strength,
                 'sales_price'       =>  $record->price,
@@ -307,8 +335,8 @@ class StockModel
                 'totalSalesQnty'    =>  ($record->total_out?$record->total_out:0) + ($record->total_purchase_return?$record->total_purchase_return:0),
                 'stok_quantity'     =>  $record->stock,
                 'stock_box'         =>  $record->stock/$record->box_size,
-                'total_sale_price'  =>  $record->stock*$record->price,
-                'purchase_total'   =>   $record->stock*$record->manufacturer_price,
+                'total_sale_price'  =>  $record->stock * (float)$record->price,
+                'purchase_total'    =>  $record->stock * (float)$record->manufacturer_price,
             ); 
             $sl++;
          }

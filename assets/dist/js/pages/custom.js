@@ -3332,7 +3332,7 @@ $(document).ready(function () {
             responsive: !0,
             dom: "<'row'<'col-md-6'Bl><'col-md-6'f>>rt<'bottom'ip><'clear'>",
             aaSorting: [[1, "asc"]],
-            columnDefs: [{ bSortable: !1, aTargets: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10] }],
+            columnDefs: [{ bSortable: !1, aTargets: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }],
             processing: !0,
             serverSide: !0,
             lengthMenu: [
@@ -3355,13 +3355,14 @@ $(document).ready(function () {
             columns: [
                 { data: "sl" },
                 { data: "product_name" },
+                { data: "batch_id" },
                 { data: "manufacturer_name" },
                 { data: "sales_price", class: "text-right", render: $.fn.dataTable.render.number(",", ".", 2, e) },
                 { data: "purchase_p", class: "text-right", render: $.fn.dataTable.render.number(",", ".", 2, e) },
                 { data: "totalPurchaseQnty" },
                 { data: "totalSalesQnty" },
                 { data: "stok_quantity", class: "stock" },
-                { data: "stock_box", render: $.fn.dataTable.render.number(",", ".", 2) },
+                { data: "stock_box", class: "stock text-right", render: $.fn.dataTable.render.number(",", ".", 2) },
                 { data: "total_sale_price", class: "total_sale text-right", render: $.fn.dataTable.render.number(",", ".", 2, e) },
                 { data: "purchase_total", class: "total_purchase text-right", render: $.fn.dataTable.render.number(",", ".", 2, e) },
             ],
@@ -3396,7 +3397,7 @@ $(document).ready(function () {
             responsive: !0,
             dom: "<'row'<'col-md-6'Bl><'col-md-6'f>>rt<'bottom'ip><'clear'>",
             aaSorting: [[1, "asc"]],
-            columnDefs: [{ bSortable: !1, aTargets: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10] }],
+            columnDefs: [{ bSortable: !1, aTargets: [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11] }],
             processing: !0,
             serverSide: !0,
             lengthMenu: [
@@ -3419,6 +3420,7 @@ $(document).ready(function () {
             columns: [
                 { data: "sl" },
                 { data: "product_name" },
+                { data: "batch_id" },
                 { data: "manufacturer_name" },
                 { data: "sales_price", class: "text-right", render: $.fn.dataTable.render.number(",", ".", 2, e) },
                 { data: "purchase_p", class: "text-right", render: $.fn.dataTable.render.number(",", ".", 2, e) },

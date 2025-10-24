@@ -20,8 +20,8 @@
                     <tr>
                       <th class="text-center"><?php echo lan('sl_no') ?></th>
                       <th class="text-center"><?php echo lan('medicine_name') ?></th>
+                      <th class="text-center"><?php echo lan('batch') ?></th>
                       <th class="text-center"><?php echo lan('strength') ?></th>
-                      <th class="text-center"><?php echo lan('batch_id') ?></th>
                       <th class="text-center"><?php echo lan('expiry_date') ?></th>
                       <th class="text-center"><?php echo lan('in_qty') ?></th>
                       <th class="text-center"><?php echo lan('out_qty') ?></th>

@@ -20,6 +20,7 @@
                             <tr>
                       <th class="text-center"><?php echo lan('sl_no') ?></th>
                       <th class="text-center"><nobr><?php echo lan('medicine_name') ?></nobr></th>
+                      <th class="text-center"><nobr><?php echo lan('batch') ?></nobr></th>
                       <th class="text-center"><nobr><?php echo lan('manufacturer_name') ?></nobr></th>
                       <th class="text-center"><nobr><?php echo lan('sale_price') ?></nobr></th>
                       <th class="text-center"><nobr><?php echo lan('purchase_price') ?></nobr></th>
@@ -38,7 +39,7 @@
                         </tbody>
                            <tfoot>
                       <tr>
-                <th colspan="7" class="text-right"><?php echo lan('total')?>:</th>
+                <th colspan="8" class="text-right"><?php echo lan('total')?>:</th>
                 <th id="stockqty"></th>
                   <th></th><th></th>  <th></th> 
             </tr>
