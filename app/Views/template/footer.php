@@ -2,9 +2,9 @@
                     <div class="footer-text d-flex align-items-center justify-content-between">
                         <div class="copy">
                             Copyright &copy; 2025 - <?= date('Y'); ?> 
-                            <a href="https://yuuki0.net" target="_blank">Yuukio Fuyu</a>. All Rights Reserved
-                            <?php if (!empty($settings_info->footer_text)): ?>
-                                | <?php echo $settings_info->footer_text; ?>
+                            <a href="https://yuuki0.net" target="_blank" class="font-weight-bold text-primary">Yuukio Fuyu</a>. All Rights Reserved
+                            <?php if (!empty($settingsdata->footer_text)): ?>
+                                | <?php echo $settingsdata->footer_text; ?>
                             <?php endif; ?>
                         </div>
                         <div class="credit"></div>

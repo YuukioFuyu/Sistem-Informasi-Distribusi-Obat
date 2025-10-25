@@ -25,6 +25,13 @@
        font-size: 1.2rem;
        font-weight: 500;
        }
+            .copy {
+        position: relative;
+        z-index: 2;
+        color: rgba(60, 60, 60, 0.95);
+        text-shadow: 1px 1px 8px rgba(255, 255, 255, 0.6);
+        font-size: 0.95rem;
+        }
         </style>
         <!--<meta name="google-site-verification" content="LxSA3ttvzYDSDZMFAw-pvd3YRQ_lJbIYVRfBdVsZYMc" />-->
     </head>
@@ -142,6 +149,15 @@
   </div>
 </div>
             </div>
+            <div class="text-center mt-4">
+                <div class="copy">
+                    Copyright &copy; 2025 - <?= date('Y'); ?> 
+                    <a href="https://yuuki0.net" target="_blank" class="font-weight-bold text-primary">Yuukio Fuyu</a>. All Rights Reserved
+                    <?php if (!empty($settingsdata->footer_text)): ?>
+                        | <?php echo $settingsdata->footer_text; ?>
+                    <?php endif; ?>
+                </div>
+              </div>
             <!-- End Content -->
         </main>
         <!-- ========== END MAIN CONTENT ========== -->
