@@ -243,7 +243,6 @@ function money($val, $currency='Rp'){
         .muted { color:#333; }
     </style>
 </head>
-
 <body>
     <div class="container">
 

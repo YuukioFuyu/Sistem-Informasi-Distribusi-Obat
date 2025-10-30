@@ -17,298 +17,337 @@
 
 <div id="printArea">
     <?php
-        // ========== Placeholder / Default mapping (jika backend belum mengisi) ==========
-        $settings_info = $settings_info ?? new stdClass();
-        $settings_info->title   = $settings_info->title   ?? '';
-        $settings_info->address = $settings_info->address ?? '-';
-        $settings_info->phone   = $settings_info->phone   ?? '-';
-        $settings_info->logo    = $settings_info->logo    ?? '';
-        $settings_info->currency= $settings_info->currency?? '';
-        $settings_info->tin     = $settings_info->tin     ?? '-';
-        $settings_info->gdp     = $settings_info->gdp     ?? '-';
-        $settings_info->pbd     = $settings_info->pbd     ?? '-';
+    // ========== Placeholder / Default mapping (jika backend belum mengisi) ==========
+    $settings_info = $settings_info ?? new stdClass();
+    $settings_info->title   = $settings_info->title   ?? '';
+    $settings_info->address = $settings_info->address ?? '-';
+    $settings_info->email   = $settings_info->email   ?? '-';
+    $settings_info->phone   = $settings_info->phone   ?? '-';
+    $settings_info->logo    = $settings_info->logo    ?? '';
+    $settings_info->currency= $settings_info->currency?? '';
+    $settings_info->tin     = $settings_info->tin     ?? '-';
+    $settings_info->gdp     = $settings_info->gdp     ?? '-';
+    $settings_info->pbd     = $settings_info->pbd     ?? '-';
 
-        // Main invoice / fraktur
-        $invoice = $invoice ?? new stdClass();
-        $invoice->invoice                 = $invoice->invoice ?? '0000';
-        $invoice->date                    = $invoice->date ?? '';
-        $invoice->customer_name           = $invoice->customer_name ?? '';
-        $invoice->customer_tin           = $invoice->customer_tin ?? '-';
-        $invoice->request_date            = $invoice->request_date ?? '';
-        $invoice->sales_by_firstname      = $invoice->sales_by_firstname ?? 'Sales';
-        $invoice->sales_by_lastname       = $invoice->sales_by_lastname ?? '';
-        $invoice->total_discount          = $invoice->total_discount ?? 0;
-        $invoice->invoice_discount        = $invoice->invoice_discount ?? 0;
-        $invoice->total_tax               = $invoice->total_tax ?? 0;
-        $invoice->prevous_due             = $invoice->prevous_due ?? 0;
-        $invoice->total_amount            = $invoice->total_amount ?? 0;
-        $invoice->paid_amount             = $invoice->paid_amount ?? 0;
-        $invoice->due_amount              = $invoice->due_amount ?? 0;
-        $invoice->invoice_details         = $invoice->invoice_details ?? 'Hormat kami';
+    // Main invoice / Faktur
+    $invoice = $invoice ?? new stdClass();
+    $invoice->invoice                 = $invoice->invoice ?? '0000';
+    $invoice->date                    = $invoice->date ?? '';
+    $invoice->customer_name           = $invoice->customer_name ?? '';
+    $invoice->customer_tin            = $invoice->customer_tin ?? '-';
+    $invoice->request_date            = $invoice->request_date ?? '';
+    $invoice->sales_by_firstname      = $invoice->sales_by_firstname ?? 'Sales';
+    $invoice->sales_by_lastname       = $invoice->sales_by_lastname ?? '';
+    $invoice->total_discount          = $invoice->total_discount ?? 0;
+    $invoice->invoice_discount        = $invoice->invoice_discount ?? 0;
+    $invoice->total_tax               = $invoice->total_tax ?? 0;
+    $invoice->prevous_due             = $invoice->prevous_due ?? 0;
+    $invoice->total_amount            = $invoice->total_amount ?? 0;
+    $invoice->paid_amount             = $invoice->paid_amount ?? 0;
+    $invoice->due_amount              = $invoice->due_amount ?? 0;
+    $invoice->invoice_details         = $invoice->invoice_details ?? 'Hormat kami';
 
-        // ========== Perhitungan ringkasan (fallback jika backend belum memberikan) ==========
-        $total = 0;
-        $total_discount_amount = 0;
-        foreach($details as $d){
-            $line_total = isset($d['total_price']) ? $d['total_price'] : ( (isset($d['rate'])? $d['rate']:0) * (isset($d['quantity'])? $d['quantity']:1) );
-            $total += $line_total;
-            $total_discount_amount += isset($d['discount']) ? $d['discount'] : 0;
-        }
-        // Jika main sudah punya nilai, prioritaskan nilai backend
-        $subtotal = $invoice->total_amount && $invoice->total_amount>0 ? ($invoice->total_amount - $invoice->total_tax) : $total;
-        $deemed_value = $invoice->deemed_value ?? 0; // nilai lain
-        $ppn_amount = $invoice->total_tax ?? 0;
-        $grand_total = $invoice->total_amount && $invoice->total_amount>0 ? $invoice->total_amount : ($subtotal + $deemed_value + $ppn_amount);
+    // ========== Perhitungan ringkasan (fallback jika backend belum memberikan) ==========
+    $total = 0;
+    $total_discount_amount = 0;
+    foreach($details as $d){
+        $line_total = isset($d['total_price']) ? $d['total_price'] : ( (isset($d['rate'])? $d['rate']:0) * (isset($d['quantity'])? $d['quantity']:1) );
+        $total += $line_total;
+        $total_discount_amount += isset($d['discount']) ? $d['discount'] : 0;
+    }
+    // Jika main sudah punya nilai, prioritaskan nilai backend
+    $subtotal = $invoice->total_amount && $invoice->total_amount>0 ? ($invoice->total_amount - $invoice->total_tax) : $total;
+    $deemed_value = $invoice->deemed_value ?? 0; // nilai lain
+    $ppn_amount = $invoice->total_tax ?? 0;
+    $grand_total = $invoice->total_amount && $invoice->total_amount>0 ? $invoice->total_amount : ($subtotal + $deemed_value + $ppn_amount);
 
-        // Helper currency format
-        function money($val, $currency='Rp'){
-            return $currency . ' ' . number_format((float)$val,0,',','.');
-        }
+    // Helper currency format
+    function money($val, $currency='Rp'){
+        return $currency . ' ' . number_format((float)$val,0,',','.');
+    }
     ?>
+
     <head>
         <meta charset="UTF-8">
-        <title>Fraktur - <?php echo htmlspecialchars($invoice->invoice); ?></title>
+        <title>Faktur - <?php echo htmlspecialchars($invoice->invoice); ?></title>
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <style>
-        /* ====== Print page settings ====== */
-        @page { size: A4 portrait; margin: 0; }
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            font-size: 16px; /* 13px × 1.3 */
-            -webkit-print-color-adjust: exact;
-        }
+            /* ====== Print page settings ====== */
+            @page { size: 216mm 139mm portrait; margin: 0; }
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                font-size: 13.5px;
+                -webkit-print-color-adjust: exact;
+            }
+            .container {
+                width: 216mm;
+                height: 139mm;
+                padding-top: 5mm;
+                padding-left: 3mm;
+                padding-right: 3mm;
+                padding-bottom: 0mm;
+                box-sizing: border-box;
+                position: relative;
+                color: #fff;
+            }
 
-        .container {
-            width: 210mm;
-            height: 297mm;
-            padding: 3.5mm 3.5mm;
-            box-sizing: border-box;
-            position: relative;
-            color: #000;
-            background: #fff;
-        }
+            /* ====== HEADER ====== */
+            .header-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: stretch;
+                min-height: 95px;
+                position: relative;
+            }
+            .left-header {
+                display: flex;
+                align-items: flex-start;
+                max-width: 55%;
+            }
+            .logo {
+                width: 1.7cm;
+                height: auto;
+                margin-right: 8px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                overflow: hidden;
+            }
+            .logo img {
+                max-width: 100%;
+                max-height: 100%;
+                display: none;
+            }
+            .company-title {
+                font-weight: bold;
+                font-size: 14px;
+                line-height: 1.1;
+            }
+            .company-info {
+                margin-top: 6px;
+                font-size: 12.5px;
+                line-height: 1.2;
+                max-width: 68%;
+            }
+            .info-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 3px;
+                margin-top: 4px;
+            }
 
-        /* ====== HEADER ====== */
-        .header-row {
-            position: relative;
-            display: flex;
-            justify-content: space-between;
-            align-items: stretch;
-            min-height: 90px;
-        }
+            .info-grid .row {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+            }
 
-        .left-header {
-            display: flex;
-            align-items: flex-start;
-            max-width: 46%;
-        }
+            .pair {
+                display: inline-flex;
+                white-space: nowrap;
+                min-width: 82%;
+            }
 
-        .logo {
-            width: 110.5px; /* 85 × 1.3 */
-            height: 110.5px;
-            background: #f0f0f0;
-            margin-right: 15.6px; /* 12 × 1.3 */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
+            .label {
+                font-weight: normal;
+                margin-right: 4px;
+            }
 
-        .logo img {
-            max-width: 100%;
-            max-height: 100%;
-            display: block;
-        }
+            .value {
+                color: #000;
+            }
+            .center-header {
+                position: absolute;
+                top: 38%;
+                left: 64%;
+                transform: translate(-50%, -50%);
+                font-weight: bold;
+                font-size: 17.5px;
+                text-align: center;
+                white-space: nowrap;
+            }
+            .right-header {
+                border: 1px solid #000;
+                padding: 9px 14px;
+                font-size: 13.5px;
+                line-height: 1.4;
+                min-width: 205px;
+                box-sizing: border-box;
+                position: absolute;
+                right: 0;
+                color: #000;
+            }
 
-        .company-title {
-            font-weight: bold;
-            font-size: 20px; /* 16 × 1.3 */
-            line-height: 1.1;
-        }
+            /* ====== TABLE ====== */
+            .items {
+                margin-top: 6px;
+                table-layout: auto;
+            }
+            .items th, .items td {
+                border: 1px solid #fff;
+                text-align: center;
+                font-size: 12.5px;
+                box-sizing: border-box;
+                color: #000;
+            }
+            .items th {
+                font-weight: bold;
+                color: #fff;
+            }
+            .items td.left {
+                text-align: left;
+                padding-left: 6px;
+            }
 
-        .company-info {
-            margin-top: 7.8px; /* 6 × 1.3 */
-            font-size: 15px; /* 12 × 1.3 */
-            line-height: 1.25;
-        }
+            /* Lebar kolom presisi */
+            .col-pbr      { width: 1.7cm; }
+            .col-batch    { width: 2.2cm; }
+            .col-ed       { width: 1.4cm; }
+            .col-qty      { width: 1.85cm; }
+            .col-nama     { width: 6.0cm; }
+            .col-harga    { width: 2.8cm; }
+            .col-disc     { width: 1.8cm; }
+            .col-subtotal { width: 3.25cm; }
 
-        .center-header {
-            position: absolute;
-            top: 50%;
-            left: 58%;
-            transform: translate(-50%, -50%);
-            font-weight: bold;
-            font-size: 19px; /* 15 × 1.3 */
-            text-align: center;
-            white-space: nowrap;
-        }
+            /* Total tinggi tabel: 7.1 cm (header + body) */
+            .items thead tr { height: 0.7cm; }
+            .items tbody { height: 6.4cm; }
+            .items tbody tr { height: calc(6.4cm / 12); }
 
-        .right-header {
-            border: 1px solid #000;
-            padding: 10.4px 15.6px; /* 8 × 1.3, 12 × 1.3 */
-            font-size: 16.5px; /* 13 × 1.3 */
-            line-height: 1.8;
-            min-width: 200px;
-            box-sizing: border-box;
-        }
+            /* ====== FOOTER AREA ====== */
+            .footer-area {
+                position: relative;
+                width: 100%;
+                height: 160px;
+                margin-top: 8px;
+            }
+            .left-footer {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 32%;
+                text-align: center;
+                font-size: 12.5px;
+            }
+            .center-footer {
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                text-align: center;
+                font-size: 12.5px;
+            }
+            .right-footer {
+                position: absolute;
+                top: -10px;
+                right: 0;
+                width: 24%;
+                font-size: 12.5px;
+                text-align: left;
+                box-sizing: border-box;
+                line-height: 0.3;
+                color: #000;
+            }
+            .right-footer .line {
+                border-top:1px solid #000;
+                margin:6px 0;
+                width:100%;
+                display:block;
+            }
 
-        /* ====== TABLE ====== */
-        .items {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .items th {
-            border: 1px solid #000 !important;
-            padding: 7px 7px;
-            text-align: center;
-            font-size: 15px; /* 12 × 1.3 */
-            font-weight: bold;
-        }
-
-        .items td {
-            border-top: none;
-            border-bottom: none;
-            border-left: 1px solid #000 !important;
-            border-right: 1px solid #000 !important;
-            padding: 5px 5px;
-            text-align: center;
-            font-size: 15px; /* 12 × 1.3 */
-        }
-
-        .items tbody tr:last-child td {
-            border-bottom: 1px solid #000 !important;
-        }
-
-        .items th { font-weight: bold !important; }
-        .items td.left { text-align: left; padding-left: 8px; }
-        .items tbody tr { height: 18px; }
-
-        /* ====== FOOTER AREA (ABSOLUTE POSITIONS) ====== */
-        .footer-area {
-            position: relative;
-            width: 100%;
-            height: 140px;
-            margin-top: 20px;
-        }
-
-        .left-footer {
-            position: absolute;
-            top: 4px;
-            left: 0;
-            width: 32%;
-            line-height: 1.2;
-            text-align: center;
-            font-size: 16.5px; /* 13 × 1.3 */
-        }
-        .left-footer p { margin: 6px 0; }
-
-        .center-footer {
-            position: absolute;
-            top: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-size: 17.5px; /* 14 × 1.3 */
-        }
-
-        .right-footer {
-            position: absolute;
-            top: 2px;
-            right: 0;
-            width: 28%;
-            font-size: 16.5px; /* 13 × 1.3 */
-            line-height: 1.1;
-            text-align: left;
-            box-sizing: border-box;
-            padding-left: 7.8px; /* 6 × 1.3 */
-        }
-
-        .right-footer p { margin: 5.2px 0; /* 4 × 1.3 */ }
-        .right-footer .line { border-top: 2px solid #000; margin: 7.8px 0; width: 100%; display: block; }
-
-        /* Misc */
-        .small { font-size: 14px; /* 11 × 1.3 */ }
-        .text-right { text-align: center !important; }
-        .muted { color: #333; }
-    </style>
-
+            .small { font-size:11.5px; }
+            .text-right { text-align: right; }
+            .muted { color:#333; }
+        </style>
     </head>
     <body>
         <div class="container">
 
             <!-- HEADER -->
             <div class="header-row">
-
-                <!-- LEFT: Company -->
+                <!-- Kiri -->
                 <div class="left-header">
                     <div class="logo">
                         <?php if(!empty($settings_info->logo)): ?>
                             <img src="<?php echo htmlspecialchars($settings_info->logo); ?>" alt="logo">
                         <?php else: ?>
-                            <!-- placeholder logo -->
                             <div style="font-size:11px;color:#666;text-align:center;">LOGO</div>
                         <?php endif; ?>
                     </div>
                     <div>
-                        <div class="company-title">
-                            <?php echo htmlspecialchars($settings_info->title); ?>
-                        </div>
+                        <div class="company-title"><?php echo htmlspecialchars($settings_info->title); ?></div>
                         <div class="company-info">
                             <?php echo nl2br(htmlspecialchars($settings_info->address)); ?><br>
                             Telp: <?php echo htmlspecialchars($settings_info->phone); ?><br>
-                            CDOB: <?php echo htmlspecialchars($settings_info->gdp); ?><br>
-                            NPWP: <?php echo htmlspecialchars($settings_info->tin); ?><br>
-                            Izin PBF: <?php echo htmlspecialchars($settings_info->pbd); ?>
+                            <div class="info-grid">
+                                <div class="row">
+                                    <span class="pair">
+                                        <span class="label" style="color:#fff;">Email:</span>
+                                        <span class="value" style="color:#fff;"><?php echo htmlspecialchars($settings_info->email); ?></span>
+                                    </span>
+                                    <span class="pair" style="color:#000;">
+                                        <span class="label">CDOB:</span>
+                                        <span class="value"><?php echo htmlspecialchars($settings_info->gdp); ?></span>
+                                    </span>
+                                </div>
+                                <div class="row">
+                                    <span class="pair">
+                                        <span class="label" style="color:#fff;">NPWP:</span>
+                                        <span class="value" style="color:#fff;"><?php echo htmlspecialchars($settings_info->tin); ?></span>
+                                    </span>
+                                    <span class="pair" style="color:#000;">
+                                        <span class="label">Izin PBF:</span>
+                                        <span class="value"><?php echo htmlspecialchars($settings_info->pbd); ?></span>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- RIGHT: Textbox -->
+                <!-- Kanan -->
                 <div class="right-header">
-                    Tanggal: <?php $dateTime = new DateTime($invoice->date); echo htmlspecialchars($dateTime->format('d/m/Y H:i:s')); ?><br>
+                    <?php $dateTime = new DateTime($invoice->date); echo htmlspecialchars($dateTime->format('d/m/Y H:i:s')); ?><br>
                     Kepada: <?php echo htmlspecialchars($invoice->customer_name); ?><br>
                     NPWP: <?php echo htmlspecialchars($invoice->customer_tin); ?><br>
                     Tanggal SP: <?php $requestDate = new DateTime($invoice->request_date); echo htmlspecialchars($requestDate->format('d/m/Y')); ?>
                 </div>
 
-                <!-- CENTER: Fraktur -->
-                <div class="center-header">
-                    Fraktur: <?php echo htmlspecialchars($invoice->invoice); ?>
+                <!-- Tengah -->
+                <div class="center-header" style="color: #000;">
+                    <?php echo htmlspecialchars($invoice->invoice); ?>
                 </div>
             </div>
 
-            <!-- ITEMS TABLE -->
+            <!-- TABEL ITEM -->
             <table class="items" cellpadding="0" cellspacing="0">
                 <thead>
                     <tr>
-                        <th style="width:8%;">PBR.CODE</th>
-                        <th style="width:9%;">BATCH</th>
-                        <th style="width:7%;">E D</th>
-                        <th style="width:7%;">Q T Y</th>
-                        <th style="width:40%;">NAMA BARANG</th>
-                        <th style="width:10%;">HARGA</th>
-                        <th style="width:7%;">DISC</th>
-                        <th style="width:12%;">SUB TOTAL</th>
+                        <th class="col-pbr">PBR.CODE</th>
+                        <th class="col-batch">BATCH</th>
+                        <th class="col-ed">E D</th>
+                        <th class="col-qty">Q T Y</th>
+                        <th class="col-nama">NAMA BARANG</th>
+                        <th class="col-harga">HARGA</th>
+                        <th class="col-disc">DISC</th>
+                        <th class="col-subtotal">SUB TOTAL</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
-                    // render rows from $details; keep a fixed count of rows for consistent print layout (e.g., 12 rows)
-                    $max_rows = 12;
+                    $max_rows = 10;
                     $i = 0;
                     foreach($details as $d):
                         $i++;
-                        $pbr   = $d['pbr_code'] ?? '-';
+                        $pbr   = $d['quantity'] ?? ($d['qty'] ?? 0);
                         $batch = $d['batch_id'] ?? '-';
                         $ed    = $d['ed'] ?? ($d['expeire_date'] ?? '-');
-                        $qty   = isset($d['quantity']) ? $d['quantity'] : ($d['qty'] ?? 0);
+                        $qty   = $d['quantity'] ?? ($d['qty'] ?? 0);
                         $name  = ($d['product_name'] ?? ($d['nama_barang'] ?? 'nama_barang')) . (isset($d['strength']) ? ' ('.$d['strength'].')' : '');
-                        $rate  = isset($d['rate']) ? $d['rate'] : ($d['harga'] ?? 0);
-                        $disc  = isset($d['discount']) ? $d['discount'] : ($d['disc'] ?? 0);
-                        $subtotal_line = isset($d['total_price']) ? $d['total_price'] : ($rate * ($qty?:1) - $disc);
+                        $rate  = $d['rate'] ?? ($d['harga'] ?? 0);
+                        $disc  = $d['discount'] ?? ($d['disc'] ?? 0);
+                        $subtotal_line = $d['total_price'] ?? ($rate * ($qty ?: 1) - $disc);
                         $rate_label = money($rate, $settings_info->currency);
                         $subtotal_label = money($subtotal_line, $settings_info->currency);
                     ?>
@@ -324,61 +363,39 @@
                     </tr>
                     <?php endforeach; ?>
 
-                    <?php
-                    // fill remaining empty rows until max_rows
-                    for($j = $i; $j < $max_rows; $j++): ?>
+                    <?php for($j = $i; $j < $max_rows; $j++): ?>
                     <tr>
                         <td>&nbsp;</td><td></td><td></td><td></td><td class="left"></td><td></td><td></td><td></td>
                     </tr>
                     <?php endfor; ?>
-
                 </tbody>
             </table>
 
             <!-- FOOTER -->
             <div class="footer-area">
-
-                <!-- LEFT: Penerima (centered within its block) -->
                 <div class="left-footer">
-                    <p><strong>Penerima</strong></p><br><br><br>
+                    <p><strong>Penerima</strong></p><br><br>
                     <p>( ................................................. )</p>
                     <p>Nama Terang</p>
                 </div>
-
-                <!-- CENTER: Hormat Kami -->
                 <div class="center-footer">
-                    <p><strong><?php echo $invoice_details; ?></strong></p>
+                    <p><strong><?php echo htmlspecialchars($invoice->invoice_details); ?></strong></p>
                 </div>
-
-                <!-- RIGHT: Sub Total, DPP, PPN, Garis, Total -->
                 <div class="right-footer">
                     <?php
-                        // compute summary values (prefer backend $invoice if available)
                         $computed_subtotal = $total;
-                        $display_subtotal = isset($invoice->subtotal) && $invoice->subtotal>0 ? $invoice->subtotal : $computed_subtotal;
-                        $display_deemed_value = isset($invoice->deemed_value) ? $invoice->deemed_value : $deemed_value;
-                        $display_ppn = isset($invoice->total_tax) ? $invoice->total_tax : $ppn_amount;
-                        $display_total = isset($invoice->total_amount) && $invoice->total_amount>0 ? $invoice->total_amount : ($display_subtotal + $display_deemed_value + $display_ppn);
+                        $display_subtotal = $invoice->subtotal ?? $computed_subtotal;
+                        $display_deemed_value = $invoice->deemed_value ?? $deemed_value;
+                        $display_ppn = $invoice->total_tax ?? $ppn_amount;
+                        $display_total = $invoice->total_amount > 0 ? $invoice->total_amount : ($display_subtotal + $display_deemed_value + $display_ppn);
                     ?>
-                    <p>Sub Total: <?php echo money($display_subtotal, $settings_info->currency); ?></p>
+                    <p>Total: <?php echo money($display_subtotal, $settings_info->currency); ?></p>
                     <p>DPP Nilai Lain: <?php echo money($display_deemed_value, $settings_info->currency); ?></p>
                     <p>PPN: <?php echo money($display_ppn, $settings_info->currency); ?></p>
                     <span class="line"></span>
-                    <p><strong>Total: <?php echo money($display_total, $settings_info->currency); ?></strong></p>
+                    <p><strong>Grand Total: <?php echo money($display_total, $settings_info->currency); ?></strong></p>
                 </div>
-
             </div>
-
-            <!-- Optional: commented barcode (keputusan Anda: jangan hapus, hanya comment) -->
-            <?php
-            /*
-            // Barcode disabled - keep for future use
-            // Example using Picqer\Barcode\BarcodeGeneratorPNG
-            // $generator = new Picqer\Barcode\BarcodeGeneratorPNG();
-            // echo '<div style="text-align:center;margin-top:8px;"><img src="data:image/png;base64,' . base64_encode($generator->getBarcode($invoice->invoice, $generator::TYPE_CODE_128)) . '" alt="barcode"/></div>';
-            */
-            ?>
-
         </div>
     </body>
 </div>

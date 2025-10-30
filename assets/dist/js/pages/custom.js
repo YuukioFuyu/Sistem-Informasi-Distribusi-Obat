@@ -3794,10 +3794,12 @@ function checkalldelete(t) {
               });
     });
 }
-function printDiv(t) {
-    var e = $("body").html(),
-        a = $("#" + t).clone();
-    $("body").empty().html(a), window.print(), $("body").html(e);
+function printDiv(divId) {
+    var html = document.getElementById(divId).innerHTML;
+    printJS({
+        printable: html,
+        type: 'raw-html',
+    });
 }
 $(document).ready(function () {
     for (var t = document.getElementsByClassName("bank_div"), e = 0; e < t.length; e++) t[e].style.display = "none";
