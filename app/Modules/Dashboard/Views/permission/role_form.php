@@ -32,17 +32,47 @@
                     <tr>
                         <th class="text-center"><?php echo lan('sl_no');?></th>
                         <th class="text-center"><?php echo lan('menu_name');?></th>
+
+                        <!--
                         <th class="text-center"><?php echo lan('create');?>(<label for="checkAllcreate<?php echo $m?>"><input type="checkbox" onclick="checkallcreate(<?php echo $m?>)" id="checkAllcreate<?php echo $m?>"  name="" > All)</label> </th>
                         <th class="text-center"><?php echo lan('read');?> (<label for="checkAllread<?php echo $m?>"><input type="checkbox" onclick="checkallread(<?php echo $m?>)" id="checkAllread<?php echo $m?>"  name="" > All)</label></th>
                         <th class="text-center"><?php echo lan('update');?>  (<label for="checkAlledit<?php echo $m?>"><input type="checkbox" onclick="checkalledit(<?php echo $m?>)" id="checkAlledit<?php echo $m?>"  name="" > All)</label></th>
                         <th class="text-center"><?php echo lan('delete');?> (<label for="checkAlldelete<?php echo $m?>"><input type="checkbox" onclick="checkalldelete(<?php echo $m?>)" id="checkAlldelete<?php echo $m?>"  name="" > All)</label></th>
+                        -->
+
+                        <th class="text-center"><?php echo lan('create');?><label for="checkAllcreate<?php echo $m?>"></label></th>
+                        <th class="text-center"><?php echo lan('read');?><label for="checkAllread<?php echo $m?>"></label></th>
+                        <th class="text-center"><?php echo lan('update');?><label for="checkAlledit<?php echo $m?>"></label></th>
+                        <th class="text-center"><?php echo lan('delete');?><label for="checkAlldelete<?php echo $m?>"></label></th>
+
                     </tr>
                     </thead>
                     <?php
 
                      $sl = 0 ?>
                     <?php if (!empty($account_sub)) { ?>
-                        <?php foreach ($account_sub as $key1 => $module_name) { ?>
+                        <?php 
+                        
+                        // Define an array of IDs to be hidden
+                        $hidden_ids = [
+                            24, 25, 26, 122, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+                            46, 47, 48, 49, 50, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73,
+                            74, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 92, 93, 94, 95,
+                            51, 52, 90, 91, 101, 111, 112
+                        ];
+
+                        foreach ($account_sub as $key1 => $module_name) {
+
+                        // Skip rendering if the module ID is in the hidden IDs array
+                        if (in_array($module_name->id, $hidden_ids)){
+                            if (in_array($module_name->id, $hidden_ids)) {
+                                echo '<input type="hidden" name="fk_module_id['.$m.']['.$sl.'][]" value="'.$module_name->id.'">';
+                                $sl++;
+                                continue;
+                            }
+                        }
+                        
+                        ?>
 
                             <?php
                             $createID = 'id="create'.$m.''.$sl.'" class="create'.$m.' custom-control-input"';
