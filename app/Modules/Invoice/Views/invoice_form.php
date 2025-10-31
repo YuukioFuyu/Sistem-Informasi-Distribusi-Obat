@@ -55,13 +55,33 @@
                     </div>
                 </div>
 
+                <div class="form-group row">               
+                    <label for="sales_name" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('sales_name')?>:
+                    </label>
+                    <div class="col-md-4">
+                        <div class="">
+                            <input type="text" name="sales_name" id="sales_name" class="form-control" value="<?php echo $sales_name?>" onkeyup="SalesListInvoice()" tabindex="4">
+                            <input type="hidden" name="sales_id" id="sales_id" class="form-control" value="<?php echo $sales_id?>">
+                        </div>
+                    </div>
+                    <label for="due_date" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('due_date')?>:
+                    </label>
+                    <div class="col-md-4">
+                        <div class="">
+                            <input type="text" class="form-control datepicker" name="due_date" id="due_date" value="" tabindex="5">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group row">
                     <label for="payment_type" class="col-md-2 text-right col-form-label">
                         <?php echo lan('payment_type')?>:
                     </label>
                     <div class="col-md-4">
                         <div class="">
-                            <select name="payment_type" id="payment_type" onchange="bank_payment(this.value)" class="form-control select2" tabindex="4">
+                            <select name="payment_type" id="payment_type" onchange="bank_payment(this.value)" class="form-control select2" tabindex="6">
                                 <option value="1" selected="selected"><?php echo lan('cash_payment')?></option>
                                 <option value="2"><?php echo lan('bank_payment')?></option>
                             </select>
@@ -72,7 +92,7 @@
                     </label>
                     <div class="col-md-4">
                         <div class="">
-                            <input type="text" class="form-control" name="details" id="details" value="" tabindex="5">
+                            <input type="text" class="form-control" name="details" id="details" value="" tabindex="7">
                         </div>
                     </div>
                 </div>

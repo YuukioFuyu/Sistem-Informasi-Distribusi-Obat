@@ -407,6 +407,35 @@ function CustomerListInvoice(t) {
         $(this).autocomplete(l);
     });
 }
+function SalesListInvoice(t) {
+    var e = $("#base_url").val(),
+        a = $('[name="csrf_test_name"]').val(),
+        l = {
+            minLength: 0,
+            source: function (t, l) {
+                var n = $("#sales_name").val();
+                $.ajax({
+                    url: e + "/invoice/search_sales",
+                    method: "POST",
+                    dataType: "json",
+                    data: { term: t.term, sales_name: n, app_csrf: a },
+                    success: function (t) {
+                        l(t);
+                    },
+                });
+            },
+            focus: function (t, e) {
+                return $(this).val(e.item.label), !1;
+            },
+            select: function (t, e) {
+                $(this).parent().parent().find("#sales_id").val(e.item.value);
+                return $(this).unbind("change"), !1;
+            },
+        };
+    $("body").on("keypress.autocomplete", "#sales_name", function () {
+        $(this).autocomplete(l);
+    });
+}
 function bank_payment(t) {
     if (2 == t) var e = "block";
     else e = "none";

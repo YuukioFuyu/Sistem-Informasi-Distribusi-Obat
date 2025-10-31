@@ -47,6 +47,19 @@ class InvoiceModel
                 ->getResultArray(); 
     }
 
+    public function search_sales($sales_name)
+    {
+        return $this->db->table('user')
+            ->select("id, CONCAT_WS(' ', firstname, lastname) AS fullname")
+            ->groupStart()
+                ->like('firstname', $sales_name)
+                ->orLike('lastname', $sales_name)
+            ->groupEnd()
+            ->limit(10)
+            ->get()
+            ->getResultArray();
+    }
+
     public function save_invoice($data=[]){
         $setting_data = $this->setting_data();                       
      date_default_timezone_set($setting_data->timezone);
@@ -841,15 +854,25 @@ return $product_information;
         return $data=$query->getResultArray();
   }
 
- public function invoice_main($invoice_id){
-   return  $details_info = $this->db->table('invoice a')
-            ->select('a.*,c.customer_name,c.customer_tin,d.firstname,d.lastname')
-            ->join('customer_information c','a.customer_id=c.customer_id','left')
-            ->join('user d','a.sales_by=d.id')
-            ->where('a.invoice_id',$invoice_id)
-            ->get()
-            ->getRow();
-  }  
+  public function invoice_main($invoice_id)
+  {
+      return $this->db->table('invoice a')
+          ->select('
+              a.*,
+              c.customer_name,
+              c.customer_tin,
+              u1.firstname AS sales_firstname,
+              u1.lastname AS sales_lastname,
+              u2.firstname AS printed_firstname,
+              u2.lastname AS printed_lastname
+          ')
+          ->join('customer_information c', 'a.customer_id = c.customer_id', 'left')
+          ->join('user u1', 'a.sales_by = u1.id', 'left')
+          ->join('user u2', 'a.printed_by = u2.id', 'left')
+          ->where('a.invoice_id', $invoice_id)
+          ->get()
+          ->getRow();
+  }
 
   public function company_details(){
     return  $details_info = $this->db->table('setting')
@@ -1016,13 +1039,22 @@ public function getitemlist($cid)
     }
 
 
-    public function todays_saleList(){
-      $date = date('Y-m-d');
-         return  $details_info = $this->db->table('invoice a')
-            ->select('a.*,c.customer_name,d.firstname,d.lastname')
-            ->join('customer_information c','a.customer_id=c.customer_id','left')
-            ->join('user d','a.sales_by=d.id')
-            ->where('a.date',$date)
+    public function todays_saleList()
+    {
+        $date = date('Y-m-d');
+        return $this->db->table('invoice a')
+            ->select('
+                a.*,
+                c.customer_name,
+                u1.firstname AS sales_firstname,
+                u1.lastname AS sales_lastname,
+                u2.firstname AS printed_firstname,
+                u2.lastname AS printed_lastname
+            ')
+            ->join('customer_information c', 'a.customer_id = c.customer_id', 'left')
+            ->join('user u1', 'a.sales_by = u1.id', 'left')
+            ->join('user u2', 'a.printed_by = u2.id', 'left')
+            ->where('a.date', $date)
             ->get()
             ->getResultArray();
     }

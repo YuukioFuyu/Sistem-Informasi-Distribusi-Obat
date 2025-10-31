@@ -11,6 +11,7 @@ $routes->group('invoice', ['namespace' => 'App\Modules\Invoice\Controllers'], fu
 	$subroutes->add('add_invoice', 'Invoice::bdtask_0001_invoice_form');
 	$subroutes->add('pos_invoice', 'Invoice::bdtask_0002_pos_invoice_form');
 	$subroutes->add('search_customer', 'Invoice::search_customers');
+	$subroutes->add('search_sales', 'Invoice::search_sales');
 	$subroutes->add('get_posdata', 'Invoice::pos_setup');
 	$subroutes->add('get_batch_stock', 'Invoice::retrieve_product_batchid');
 	$subroutes->add('customer_previous', 'Invoice::previous');
