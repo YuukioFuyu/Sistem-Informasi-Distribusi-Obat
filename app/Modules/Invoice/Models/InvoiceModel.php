@@ -39,7 +39,7 @@ class InvoiceModel
 
     }
 
-    public function pos_customer_setup() {
+    public function pos_customer_setup(){
         return $query = $this->db->table('customer_information')
                 ->select('*')
                 ->like('customer_name', 'Walking','after')
@@ -47,8 +47,7 @@ class InvoiceModel
                 ->getResultArray(); 
     }
 
-    public function search_sales($sales_name)
-    {
+    public function search_sales($sales_name){
         return $this->db->table('user')
             ->select("id, CONCAT_WS(' ', firstname, lastname) AS fullname")
             ->groupStart()
@@ -58,6 +57,16 @@ class InvoiceModel
             ->limit(10)
             ->get()
             ->getResultArray();
+    }
+
+    public function get_sales_fullname($id){
+        if (empty($id)) return null;
+        $row = $this->db->table('user')
+            ->select("CONCAT_WS(' ', firstname, lastname) AS fullname")
+            ->where('id', $id)
+            ->get()
+            ->getRow();
+        return $row ? $row->fullname : null;
     }
 
     public function save_invoice($data=[]){

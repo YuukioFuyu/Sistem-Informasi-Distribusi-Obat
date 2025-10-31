@@ -45,6 +45,7 @@ class Invoice extends BaseController
         'invoice'           => $this->number_generator(),
         'deemed_value'      => ($this->request->getVar('deemed_value')?$this->request->getVar('deemed_value'):0),
         'request_date'      => ($this->request->getVar('request_date')?$this->request->getVar('request_date'):0),
+        'due_date'          => ($this->request->getVar('due_date')?$this->request->getVar('due_date'):0),
         'total_tax'         => ($this->request->getVar('total_tax')?$this->request->getVar('total_tax'):0),
         'prevous_due'       => ($this->request->getVar('previous')?$this->request->getVar('previous'):0),
         'paid_amount'       => ($this->request->getVar('paid_amount', FILTER_SANITIZE_STRING)?$this->request->getVar('paid_amount', FILTER_SANITIZE_STRING):0),
@@ -52,7 +53,8 @@ class Invoice extends BaseController
         'total_discount'    => ($this->request->getVar('total_discount', FILTER_SANITIZE_STRING)?$this->request->getVar('total_discount', FILTER_SANITIZE_STRING):0),
         'invoice_discount'  => ($this->request->getVar('invoice_discount', FILTER_SANITIZE_STRING)?$this->request->getVar('invoice_discount', FILTER_SANITIZE_STRING):0),
         'bank_id'           => $this->request->getVar('bank_id'),
-        'sales_by'          => $this->session->get('id'),
+        'sales_by'          => $this->request->getVar('sales_id'),
+        'printed_by'        => $this->session->get('id'),
         'invoice_details'   => ($this->request->getVar('details', FILTER_SANITIZE_STRING)?:NULL),
         'payment_type'      => $this->request->getVar('payment_type'),
         'status'            => 1
@@ -131,7 +133,8 @@ class Invoice extends BaseController
         'total_discount'    => ($this->request->getVar('total_discount')?$this->request->getVar('total_discount'):0),
         'invoice_discount'  => ($this->request->getVar('invoice_discount')?$this->request->getVar('invoice_discount'):0),
         'bank_id'           => $this->request->getVar('bank_id'),
-        'sales_by'          => $this->session->get('id'),
+        'sales_by'          => $this->request->getVar('sales_id'),
+        'printed_by'        => $this->session->get('id'),
         'invoice_details'   => ($this->request->getVar('details', FILTER_SANITIZE_STRING)?:NULL),
         'payment_type'      => $this->request->getVar('payment_type'),
         'status'            => 1
@@ -236,6 +239,7 @@ class Invoice extends BaseController
         'invoice'           => $this->request->getVar('invoice_no'),
         'deemed_value'      => ($this->request->getVar('deemed_value')?$this->request->getVar('deemed_value'):0),
         'request_date'      => ($this->request->getVar('request_date')?$this->request->getVar('request_date'):0),
+        'due_date'          => ($this->request->getVar('due_date')?$this->request->getVar('due_date'):0),
         'total_tax'         => ($this->request->getVar('total_tax')?$this->request->getVar('total_tax'):0),
         'prevous_due'       => ($this->request->getVar('previous')?$this->request->getVar('previous'):0),
         'paid_amount'       => ($this->request->getVar('paid_amount')?$this->request->getVar('paid_amount'):0),
@@ -243,7 +247,8 @@ class Invoice extends BaseController
         'total_discount'    => ($this->request->getVar('total_discount')?$this->request->getVar('total_discount'):0),
         'invoice_discount'  => ($this->request->getVar('invoice_discount')?$this->request->getVar('invoice_discount'):0),
         'bank_id'           => $this->request->getVar('bank_id'),
-        'sales_by'          => $this->session->get('id'),
+        'sales_by'          => $this->request->getVar('sales_id'),
+        'printed_by'        => $this->session->get('id'),
         'invoice_details'   => ($this->request->getVar('details', FILTER_SANITIZE_STRING)?:NULL),
         'payment_type'      => $this->request->getVar('payment_type'),
         'status'            => 1
@@ -293,6 +298,9 @@ class Invoice extends BaseController
         $data['taxes']         = $this->invoiceModel->tax_fields();
         $data['taxvalu']       = $this->invoiceModel->invoice_taxinfo($id);
         $data['invoice']       = $this->invoiceModel->singledata($id); 
+        $sales_id              = $data['invoice']->sales_by ?? '';
+        $data['sales_id']      = $sales_id;
+        $data['sales_name']    = $this->invoiceModel->get_sales_fullname($sales_id);
         $data['details']       = $this->invoiceModel->detailsdata($id);
         $data['module']        = "Invoice";
         $data['page']          = "invoice_edit"; 
@@ -385,6 +393,23 @@ class Invoice extends BaseController
         $json_customer[] = 'No Customer Found';
         }
         echo json_encode($json_customer);
+    }
+
+    public function search_sales()
+    {
+        $sales_name = $this->request->getVar('sales_name');
+        $sales_info = $this->invoiceModel->search_sales($sales_name);
+        if (!empty($sales_info)) {
+            foreach ($sales_info as $value) {
+                $json_sales[] = array(
+                    'label' => $value['fullname'],
+                    'value' => $value['id']
+                );
+            }
+        } else {
+            $json_sales[] = 'No Sales Found';
+        }
+        echo json_encode($json_sales);
     }
 
     public function product_search_by_manufacturer()
