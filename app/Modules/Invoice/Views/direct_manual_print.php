@@ -191,7 +191,7 @@ function terbilang($nilai) {
             white-space: nowrap;
         }
         .right-header {
-            border: 1px solid #000;
+            border: none;
             padding: 9px 14px;
             font-size: 13.5px;
             line-height: 1.4;
