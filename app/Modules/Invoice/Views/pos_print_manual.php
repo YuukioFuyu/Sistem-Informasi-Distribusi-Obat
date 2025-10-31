@@ -36,8 +36,10 @@
     $main->customer_name           = $main->customer_name ?? '';
     $main->customer_tin            = $main->customer_tin ?? '-';
     $main->request_date            = $main->request_date ?? '';
-    $main->sales_by_firstname      = $main->sales_by_firstname ?? 'Sales';
-    $main->sales_by_lastname       = $main->sales_by_lastname ?? '';
+    $main->sales_firstname         = $main->sales_firstname ?? 'Sales';
+    $main->sales_lastname          = $main->sales_lastname ?? '';
+    $main->printed_firstname       = $main->printed_firstname ?? 'Operator';
+    $main->printed_lastname        = $main->printed_lastname ?? '';
     $main->total_discount          = $main->total_discount ?? 0;
     $main->invoice_discount        = $main->invoice_discount ?? 0;
     $main->total_tax               = $main->total_tax ?? 0;
@@ -64,6 +66,44 @@
     // Helper currency format
     function money($val, $currency='Rp'){
         return $currency . ' ' . number_format((float)$val,0,',','.');
+    }
+
+    // Fungsi terbilang
+    function penyebut($nilai) {
+        $nilai = abs($nilai);
+        $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+        $temp = "";
+        if ($nilai < 12) {
+            $temp = " " . $huruf[$nilai];
+        } else if ($nilai < 20) {
+            $temp = penyebut($nilai - 10) . " belas";
+        } else if ($nilai < 100) {
+            $temp = penyebut($nilai / 10) . " puluh" . penyebut($nilai % 10);
+        } else if ($nilai < 200) {
+            $temp = " seratus" . penyebut($nilai - 100);
+        } else if ($nilai < 1000) {
+            $temp = penyebut($nilai / 100) . " ratus" . penyebut($nilai % 100);
+        } else if ($nilai < 2000) {
+            $temp = " seribu" . penyebut($nilai - 1000);
+        } else if ($nilai < 1000000) {
+            $temp = penyebut($nilai / 1000) . " ribu" . penyebut($nilai % 1000);
+        } else if ($nilai < 1000000000) {
+            $temp = penyebut($nilai / 1000000) . " juta" . penyebut($nilai % 1000000);
+        } else if ($nilai < 1000000000000) {
+            $temp = penyebut($nilai / 1000000000) . " miliar" . penyebut($nilai % 1000000000);
+        } else if ($nilai < 1000000000000000) {
+            $temp = penyebut($nilai / 1000000000000) . " triliun" . penyebut($nilai % 1000000000000);
+        }
+        return $temp;
+    }
+
+    function terbilang($nilai) {
+        if ($nilai < 0) {
+            $hasil = "minus " . trim(penyebut($nilai));
+        } else {
+            $hasil = trim(penyebut($nilai));
+        }
+        return ucwords($hasil) . " Rupiah";
     }
     ?>
 
@@ -159,12 +199,13 @@
             }
             .center-header {
                 position: absolute;
-                top: 38%;
-                left: 64%;
+                top: 30%;
+                left: 50%;
                 transform: translate(-50%, -50%);
+                font-size: 12.5px;
+                line-height: 1.5;
                 font-weight: bold;
-                font-size: 17.5px;
-                text-align: center;
+                text-align: left;
                 white-space: nowrap;
             }
             .right-header {
@@ -222,23 +263,16 @@
                 height: 160px;
                 margin-top: 8px;
             }
-            .left-footer {
+            .footer-terbilang {
                 position: absolute;
-                top: 0;
+                top: -22px;
                 left: 0;
-                width: 32%;
-                text-align: center;
+                width: 74%;
+                text-align: left;
                 font-size: 12.5px;
+                color: #000;
             }
-            .center-footer {
-                position: absolute;
-                top: 0;
-                left: 50%;
-                transform: translateX(-50%);
-                text-align: center;
-                font-size: 12.5px;
-            }
-            .right-footer {
+            .footer-total {
                 position: absolute;
                 top: -10px;
                 right: 0;
@@ -249,11 +283,66 @@
                 line-height: 0.3;
                 color: #000;
             }
+            .footer-total .line {
+                display: block;
+                border-bottom: 1px solid #000;
+                margin: 3px 0;
+            }
+            .left-footer {
+                position: absolute;
+                top: 20px;
+                left: 0;
+                width: 40%;
+                text-align: center;
+                font-size: 12px;
+            }
+            .center-footer {
+                position: absolute;
+                top: 18px;
+                left: 42%;
+                width: 40%;
+                text-align: left;
+                font-size: 12px;
+            }
+            .right-footer {
+                position: absolute;
+                top: -10px;
+                right: 0;
+                width: 24%;
+                font-size: 12.5px;
+                box-sizing: border-box;
+                line-height: 0.3;
+                color: #000;
+            }
             .right-footer .line {
                 border-top:1px solid #000;
                 margin:6px 0;
                 width:100%;
                 display:block;
+            }
+            .signature-box {
+                border: none;
+                margin-top: 5px;
+                height: 90px;
+                width: 65%;
+                box-sizing: border-box;
+                text-align: center;
+            }
+            .signature-box .title {
+                border-bottom: none;
+                font-weight: bold;
+                padding: 2px;
+                margin-bottom: 5px;
+            }
+            .signature-box .space {
+                height: 60px;
+            }
+            .operator {
+                position: absolute;
+                top: 50%;
+                left: 76%;
+                font-size: 12px;
+                color: #000;
             }
 
             .small { font-size:11.5px; }
@@ -316,7 +405,9 @@
 
                 <!-- Tengah -->
                 <div class="center-header" style="color: #000;">
-                    <?php echo htmlspecialchars($main->invoice); ?>
+                    <div class="invoice-number">No. Faktur: <?php echo htmlspecialchars($main->invoice); ?></div>
+                    <div class="sales">Sales: <?php echo htmlspecialchars($main->sales_firstname . ' ' . $main->sales_lastname); ?></div>
+                    <div class="due-date">JT Tempo: <?php $dueDate = new DateTime($main->due_date); echo htmlspecialchars($dueDate->format('d/m/Y')); ?></div>
                 </div>
             </div>
 
@@ -373,15 +464,12 @@
 
             <!-- FOOTER -->
             <div class="footer-area">
-                <div class="left-footer">
-                    <p><strong>Penerima</strong></p><br><br>
-                    <p>( ................................................. )</p>
-                    <p>Nama Terang</p>
+                <!-- Baris atas (Terbilang + Total) -->
+                <div class="footer-terbilang">
+                    <p><i><u>Terbilang :</u><br><strong><?php echo terbilang($grand_total); ?></strong></i></p>
                 </div>
-                <div class="center-footer">
-                    <p><strong><?php echo htmlspecialchars($main->invoice_details); ?></strong></p>
-                </div>
-                <div class="right-footer">
+
+                <div class="footer-total">
                     <?php
                         $computed_subtotal = $total;
                         $display_subtotal = $main->subtotal ?? $computed_subtotal;
@@ -390,10 +478,27 @@
                         $display_total = $main->total_amount > 0 ? $main->total_amount : ($display_subtotal + $display_deemed_value + $display_ppn);
                     ?>
                     <p>Total: <?php echo money($display_subtotal, $company->currency); ?></p>
-                    <p>DPP Nilai Lain: <?php echo money($display_deemed_value, $company->currency); ?></p>
                     <p>PPN: <?php echo money($display_ppn, $company->currency); ?></p>
                     <span class="line"></span>
-                    <p><strong>Grand Total: <?php echo money($display_total, $company->currency); ?></strong></p>
+                    <p><strong>Total Penjualan: <?php echo money($display_total, $company->currency); ?></strong></p>
+                </div>
+
+                <!-- Baris bawah (Penerima + Hormat Kami) -->
+                <div class="left-footer">
+                    <p><strong>Penerima</strong></p><br>
+                    <p>( ................................................. )</p>
+                    <p>Nama Terang</p>
+                </div>
+
+                <div class="center-footer">
+                    <div class="signature-box">
+                        <div class="title"><?php echo htmlspecialchars($main->invoice_details); ?></div>
+                        <div class="space"></div>
+                    </div>
+                </div>
+
+                <div class="operator">
+                    Operator: <?php echo htmlspecialchars($main->printed_firstname . ' ' . $main->printed_lastname); ?>
                 </div>
             </div>
         </div>
