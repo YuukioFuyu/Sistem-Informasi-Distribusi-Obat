@@ -35,7 +35,6 @@
     $main->date                    = $main->date ?? '';
     $main->customer_name           = $main->customer_name ?? '';
     $main->customer_tin            = $main->customer_tin ?? '-';
-    $main->request_date            = $main->request_date ?? '';
     $main->sales_firstname         = $main->sales_firstname ?? 'Sales';
     $main->sales_lastname          = $main->sales_lastname ?? '';
     $main->printed_firstname       = $main->printed_firstname ?? 'Operator';
@@ -210,9 +209,9 @@
             }
             .right-header {
                 border: none;
-                padding: 9px 14px;
+                padding: 14px 14px;
                 font-size: 13.5px;
-                line-height: 1.4;
+                line-height: 1.5;
                 min-width: 205px;
                 box-sizing: border-box;
                 position: absolute;
@@ -400,7 +399,6 @@
                     <?php $dateTime = new DateTime($main->date); echo htmlspecialchars($dateTime->format('d/m/Y H:i:s')); ?><br>
                     Kepada: <?php echo htmlspecialchars($main->customer_name); ?><br>
                     NPWP: <?php echo htmlspecialchars($main->customer_tin); ?><br>
-                    Tanggal SP: <?php $requestDate = new DateTime($main->request_date); echo htmlspecialchars($requestDate->format('d/m/Y')); ?>
                 </div>
 
                 <!-- Tengah -->

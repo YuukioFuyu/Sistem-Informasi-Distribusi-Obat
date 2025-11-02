@@ -45,12 +45,12 @@
                             <input type="text" class="form-control" name="invoice_no" id="invoice_no" placeholder="<?php echo lan('invoice_no')?>" value="<?php echo $invoice_no?>" readonly>
                         </div>
                     </div>
-                    <label for="request_date" class="col-md-2 text-right col-form-label">
-                        <?php echo lan('request_date')?>:
+                    <label for="due_date" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('due_date')?>:
                     </label>
                     <div class="col-md-4">
                         <div class="">
-                            <input type="text" class="form-control datepicker" name="request_date" id="request_date" value="" tabindex="3">
+                            <input type="text" class="form-control datepicker" name="due_date" id="due_date" value="" tabindex="3">
                         </div>
                     </div>
                 </div>
@@ -65,12 +65,13 @@
                             <input type="hidden" name="sales_id" id="sales_id" class="form-control" value="<?php echo $sales_id?>">
                         </div>
                     </div>
-                    <label for="due_date" class="col-md-2 text-right col-form-label">
-                        <?php echo lan('due_date')?>:
+                    <label for="operator_name" class="col-md-2 text-right col-form-label">
+                        <?php echo lan('operator_name')?>:
                     </label>
                     <div class="col-md-4">
                         <div class="">
-                            <input type="text" class="form-control datepicker" name="due_date" id="due_date" value="" tabindex="5">
+                            <input type="text" name="operator_name" id="operator_name" class="form-control" value="<?php echo $operator_name?>" onkeyup="OperatorListInvoice()" tabindex="5">
+                            <input type="hidden" name="operator_id" id="operator_id" class="form-control" value="<?php echo $operator_id?>">
                         </div>
                     </div>
                 </div>
