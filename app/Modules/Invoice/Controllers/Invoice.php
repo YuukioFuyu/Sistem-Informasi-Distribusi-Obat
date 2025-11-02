@@ -54,7 +54,7 @@ class Invoice extends BaseController
         'invoice_discount'  => ($this->request->getVar('invoice_discount', FILTER_SANITIZE_STRING)?$this->request->getVar('invoice_discount', FILTER_SANITIZE_STRING):0),
         'bank_id'           => $this->request->getVar('bank_id'),
         'sales_by'          => $this->request->getVar('sales_id'),
-        'printed_by'        => $this->session->get('id'),
+        'printed_by'        => ($this->request->getVar('operator_id')?$this->request->getVar('operator_id'):$this->session->get('id')),
         'invoice_details'   => ($this->request->getVar('details', FILTER_SANITIZE_STRING)?:NULL),
         'payment_type'      => $this->request->getVar('payment_type'),
         'status'            => 1
@@ -134,7 +134,7 @@ class Invoice extends BaseController
         'invoice_discount'  => ($this->request->getVar('invoice_discount')?$this->request->getVar('invoice_discount'):0),
         'bank_id'           => $this->request->getVar('bank_id'),
         'sales_by'          => $this->request->getVar('sales_id'),
-        'printed_by'        => $this->session->get('id'),
+        'printed_by'        => ($this->request->getVar('operator_id')?$this->request->getVar('operator_id'):$this->session->get('id')),
         'invoice_details'   => ($this->request->getVar('details', FILTER_SANITIZE_STRING)?:NULL),
         'payment_type'      => $this->request->getVar('payment_type'),
         'status'            => 1
@@ -248,7 +248,7 @@ class Invoice extends BaseController
         'invoice_discount'  => ($this->request->getVar('invoice_discount')?$this->request->getVar('invoice_discount'):0),
         'bank_id'           => $this->request->getVar('bank_id'),
         'sales_by'          => $this->request->getVar('sales_id'),
-        'printed_by'        => $this->session->get('id'),
+        'printed_by'        => ($this->request->getVar('operator_id')?$this->request->getVar('operator_id'):$this->session->get('id')),
         'invoice_details'   => ($this->request->getVar('details', FILTER_SANITIZE_STRING)?:NULL),
         'payment_type'      => $this->request->getVar('payment_type'),
         'status'            => 1
@@ -301,6 +301,9 @@ class Invoice extends BaseController
         $sales_id              = $data['invoice']->sales_by ?? '';
         $data['sales_id']      = $sales_id;
         $data['sales_name']    = $this->invoiceModel->get_sales_fullname($sales_id);
+        $operator_id           = $data['invoice']->printed_by ?? '';
+        $data['operator_id']   = $operator_id;
+        $data['operator_name'] = $this->invoiceModel->get_operator_fullname($operator_id);
         $data['details']       = $this->invoiceModel->detailsdata($id);
         $data['module']        = "Invoice";
         $data['page']          = "invoice_edit"; 
@@ -410,6 +413,23 @@ class Invoice extends BaseController
             $json_sales[] = 'No Sales Found';
         }
         echo json_encode($json_sales);
+    }
+
+    public function search_operator()
+    {
+        $operator_name = $this->request->getVar('operator_name');
+        $operator_info = $this->invoiceModel->search_operator($operator_name);
+        if (!empty($operator_info)) {
+            foreach ($operator_info as $value) {
+                $json_operator[] = array(
+                    'label' => $value['fullname'],
+                    'value' => $value['id']
+                );
+            }
+        } else {
+            $json_operator[] = 'No Operator Found';
+        }
+        echo json_encode($json_operator);
     }
 
     public function product_search_by_manufacturer()

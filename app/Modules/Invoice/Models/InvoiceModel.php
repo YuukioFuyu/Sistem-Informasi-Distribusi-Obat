@@ -59,7 +59,29 @@ class InvoiceModel
             ->getResultArray();
     }
 
+    public function search_operator($operator_name){
+        return $this->db->table('user')
+            ->select("id, CONCAT_WS(' ', firstname, lastname) AS fullname")
+            ->groupStart()
+                ->like('firstname', $operator_name)
+                ->orLike('lastname', $operator_name)
+            ->groupEnd()
+            ->limit(10)
+            ->get()
+            ->getResultArray();
+    }
+
     public function get_sales_fullname($id){
+        if (empty($id)) return null;
+        $row = $this->db->table('user')
+            ->select("CONCAT_WS(' ', firstname, lastname) AS fullname")
+            ->where('id', $id)
+            ->get()
+            ->getRow();
+        return $row ? $row->fullname : null;
+    }
+
+    public function get_operator_fullname($id){
         if (empty($id)) return null;
         $row = $this->db->table('user')
             ->select("CONCAT_WS(' ', firstname, lastname) AS fullname")
