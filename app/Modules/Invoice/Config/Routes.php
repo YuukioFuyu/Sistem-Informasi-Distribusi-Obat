@@ -23,6 +23,7 @@ $routes->group('invoice', ['namespace' => 'App\Modules\Invoice\Controllers'], fu
 	$subroutes->add('invoice_list_check', 'Invoice::bdtask_CheckinvoiceList');
 	$subroutes->add('invoice_details/(:num)', 'Invoice::bdtask_002m_invoice_details/$1');
 	$subroutes->add('pos_print/(:num)', 'Invoice::bdtask_005_invoice_pos_print/$1');
+	$subroutes->add('po_print/(:num)', 'Invoice::bdtask_007_invoice_po_print/$1');
 	$subroutes->add('instant_customer', 'Invoice::bdtask_006_instant_customer');
     $subroutes->add('search_medicine', 'Invoice::autocompleteproductsearch');
     $subroutes->add('medicine_details_data', 'Invoice::retrieve_product_data_inv');

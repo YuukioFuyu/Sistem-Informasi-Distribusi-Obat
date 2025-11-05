@@ -681,4 +681,13 @@ class Invoice extends BaseController
         echo json_encode($product_info);
     }
 
+    public function bdtask_007_invoice_po_print($invoice_id = null){
+        $data['title']   = 'PO Print';
+        $data['company'] = $this->invoiceModel->company_details();
+        $data['main']    = $this->invoiceModel->invoice_main($invoice_id);
+        $data['details'] = $this->invoiceModel->invoice_details($invoice_id);
+        $data['module']  = "Invoice";
+        $data['page']    = "po_print_manual"; 
+        return $this->template->layout($data);
+    }
 }

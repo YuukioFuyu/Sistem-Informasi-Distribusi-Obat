@@ -737,6 +737,8 @@ class InvoiceModel
           $button .=' <a href="'.$base_url.'/invoice/invoice_details/'.$record->invoice_id.'" class="btn btn-success-soft btn-sm" data-toggle="tooltip" data-placement="left" title="Details"><i class="fas fa-eye" aria-hidden="true"></i></a>';
 
            $button .=' <a href="'.$base_url.'/invoice/pos_print/'.$record->invoice_id.'" class="btn btn-warning-soft btn-sm" data-toggle="tooltip" data-placement="left" title="POS Print"><i class="fas fa-fax" aria-hidden="true"></i></a>';
+
+           $button .=' <a href="'.$base_url.'/invoice/po_print/'.$record->invoice_id.'" class="btn btn-violet-soft btn-sm" data-toggle="tooltip" data-placement="left" title="Purchase Order"><i class="fas fa-clipboard-list" aria-hidden="true"></i></a>';
        if($this->permission->method('invoice_list','update')->access()){  
         $button .=' <a href="'.$base_url.'/invoice/invoice_edit/'.$record->invoice_id.'" class="btn btn-primary-soft btn-sm" data-toggle="tooltip" data-placement="left" title="Update"><i class="fas fa-edit" aria-hidden="true"></i></a>';
           }
@@ -892,6 +894,7 @@ return $product_information;
               a.*,
               c.customer_name,
               c.customer_tin,
+              c.customer_mobile,
               u1.firstname AS sales_firstname,
               u1.lastname AS sales_lastname,
               u2.firstname AS printed_firstname,
