@@ -29,7 +29,7 @@
     $company->gdp     = $company->gdp     ?? '-';
     $company->pbd     = $company->pbd     ?? '-';
 
-    // Main invoice / Faktur
+    // Main PO / Surat Pesanan
     $main = $main ?? new stdClass();
     $main->date                    = $main->date ?? '';
     $main->customer_name           = $main->customer_name ?? '';
@@ -38,11 +38,11 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>Faktur - <?php echo htmlspecialchars($main->invoice); ?></title>
+        <title>Surat Pesanan - <?php echo htmlspecialchars($main->invoice); ?></title>
         <meta name="viewport" content="width=device-width,initial-scale=1">
         <style>
             /* ====== Print page settings ====== */
-            @page { size: 176mm 250mm portrait; margin: 0; }
+            @page { size: 148mm 211mm portrait; margin: 0; }
             body {
                 margin: 0;
                 font-family: Arial, sans-serif;
@@ -50,8 +50,8 @@
                 -webkit-print-color-adjust: exact;
             }
             .container {
-                width: 176mm;
-                height: 250mm;
+                width: 148mm;
+                height: 211mm;
                 padding-top: 5mm;
                 padding-left: 3mm;
                 padding-right: 3mm;
@@ -73,12 +73,12 @@
             	margin-top: 20mm;
                 display: flex;
                 align-items: flex-start;
-                max-width: 60%;
+                max-width: 70%;
             }
             .logo {
                 width: 1.7cm;
                 height: auto;
-                margin-right: 8px;
+                margin-right: 3px;
                 display:flex;
                 align-items:center;
                 justify-content:center;
@@ -90,13 +90,14 @@
             }
             .company-title {
                 font-weight: bold;
-                font-size: 15px;
+                font-size: 14px;
                 line-height: 1.2;
             }
             .company-info {
                 margin-top: 6px;
                 font-size: 12px;
                 line-height: 1.25;
+                max-width: 80%;
             }
             .info-grid {
                 display: flex;
@@ -114,7 +115,7 @@
             .pair {
                 display: inline-flex;
                 white-space: nowrap;
-                min-width: 64%;
+                min-width: 80%;
             }
 
             .label {
@@ -139,13 +140,12 @@
             .right-header {
                 border: none;
                 margin-top: 20mm;
-                padding: 14px 0;
                 font-size: 13px;
                 line-height: 1.5;
-                width: 38%;
+                width: 36%;
                 box-sizing: border-box;
                 position: absolute;
-                right: -50px;
+                right: -25px;
                 color: #000;
             }
 
@@ -188,8 +188,8 @@
 
             /* Total tinggi tabel: 7.1 cm (header + body) */
             .items thead tr { height: 0.7cm; }
-            .items tbody { height: 12.5cm; }
-            .items tbody tr { height: calc(12.5cm / 12); }
+            .items tbody { height: 10cm; }
+            .items tbody tr { height: calc(10cm / 10); }
 
             /* ====== FOOTER AREA ====== */
             .footer-area {
@@ -302,7 +302,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    $max_rows = 12;
+                    $max_rows = 10;
                     $i = 0;
                     foreach($details as $d):
                         $i++;
@@ -327,9 +327,8 @@
             <!-- FOOTER -->
             <div class="footer-area">
                 <div class="right-footer">
-                    <p><strong>Apoteker</strong></p><br><br><br>
+                    <p><strong>Apoteker</strong></p><br><br><br><br>
                     <p>( ................................................. )</p>
-                    <p>Nama Apoteker</p>
                 </div>
             </div>
         </div>
