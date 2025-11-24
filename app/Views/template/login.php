@@ -6,6 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="keywords" content="" />
         <meta name="description" content="" />
+        <link rel="manifest" href="/manifest.json">
+        <meta name="theme-color" content="#0d6efd">
         <title><?php  echo  ($title?$title:'Bdtask Pharmacare')?></title>
         <link rel="shortcut icon" href="<?php echo base_url()?>/assets/dist/img/favicon.png">
         <link href="<?php echo base_url()?>/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -14,6 +16,11 @@
         <link href="<?php echo base_url()?>/assets/plugins/themify-icons/themify-icons.min.css" rel="stylesheet">
         <link href="<?php echo base_url()?>/assets/plugins/toastr/toastr.css" rel="stylesheet">
         <link href="<?php echo base_url()?>/assets/dist/css/login.css" rel="stylesheet">
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js');
+            }
+        </script>
         <style>
             .bg-img-hero { 
        background-image: url(<?php echo  base_url(($settingsdata->login_background?$settingsdata->login_background:'assets/dist/css/abstract-bg-4.jpg'));?>);

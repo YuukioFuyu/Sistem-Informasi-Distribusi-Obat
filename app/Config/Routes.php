@@ -12,6 +12,14 @@ if (file_exists(SYSTEMPATH . 'Config/Routes.php'))
 
 /**
  * --------------------------------------------------------------------
+ * Progressive Web App
+ * --------------------------------------------------------------------
+ */
+$routes->get('manifest.json', 'App\Controllers\PWA::manifest');
+$routes->get('service-worker.js', 'App\Controllers\PWA::service_worker');
+
+/**
+ * --------------------------------------------------------------------
  * Router Setup
  * --------------------------------------------------------------------
  */
