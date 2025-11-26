@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "net.yuuki0.simpharma",
+        "sha256_cert_fingerprints": ["F9:1B:40:AC:86:DD:1F:9F:BE:3A:8C:13:EA:5F:39:2E:B2:3D:0B:CC:F3:96:D2:A8:F9:C5:21:5B:7E:BC:1B:60"]
+      }
+    }]

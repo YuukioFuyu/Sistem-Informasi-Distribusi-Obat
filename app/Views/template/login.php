@@ -6,6 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="keywords" content="" />
         <meta name="description" content="" />
+        <link rel="manifest" href="/manifest.webmanifest">
+        <meta name="theme-color" content="#37a000">
         <title><?php  echo  ($title?$title:'Bdtask Pharmacare')?></title>
         <link rel="shortcut icon" href="<?php echo base_url()?>/assets/dist/img/favicon.png">
         <link href="<?php echo base_url()?>/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -14,6 +16,11 @@
         <link href="<?php echo base_url()?>/assets/plugins/themify-icons/themify-icons.min.css" rel="stylesheet">
         <link href="<?php echo base_url()?>/assets/plugins/toastr/toastr.css" rel="stylesheet">
         <link href="<?php echo base_url()?>/assets/dist/css/login.css" rel="stylesheet">
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js');
+            }
+        </script>
         <style>
             .bg-img-hero { 
        background-image: url(<?php echo  base_url(($settingsdata->login_background?$settingsdata->login_background:'assets/dist/css/abstract-bg-4.jpg'));?>);
@@ -166,6 +173,65 @@
         <script src="<?php echo base_url()?>/assets/plugins/toastr/toastr.min.js"></script>
         <script src="<?php echo base_url()?>/assets/dist/js/sidebar.js"></script>
         <script src="<?php echo base_url()?>/assets/plugins/hideShowPassword.min.js" type="text/javascript"></script>
+
+        <!--Progressive Web App-->
+        <script>
+            if ('serviceWorker' in navigator) {
+
+                window.addEventListener('load', () => {
+
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then(async (reg) => {
+
+                            console.log("SW Registered:", reg);
+
+                            // ============================
+                            // BACKGROUND SYNC
+                            // ============================
+                            if ('sync' in reg) {
+                                try {
+                                    await reg.sync.register('sync-pending-data');
+                                    console.log("Background Sync registered");
+                                } catch (err) {
+                                    console.error("Failed to register BG Sync:", err);
+                                }
+                            } else {
+                                console.warn("Background Sync not supported");
+                            }
+
+
+                            // ============================
+                            // PERIODIC SYNC
+                            // ============================
+                            if ('periodicSync' in navigator) {
+
+                                try {
+                                    const tags = await reg.periodicSync.getTags();
+                                    if (!tags.includes('sync-latest-data')) {
+
+                                        await reg.periodicSync.register('sync-latest-data', {
+                                            minInterval: 24 * 60 * 60 * 1000 // 1 hari
+                                        });
+
+                                        console.log("Periodic Sync registered");
+                                    }
+
+                                } catch (err) {
+                                    console.error("Periodic Sync registration failed:", err);
+                                }
+
+                            } else {
+                                console.warn("Periodic Sync not supported by browser");
+                            }
+
+                        }).catch(err => {
+                            console.error("SW registration failed:", err);
+                        });
+
+                });
+
+            }
+        </script>
 
     </body>
 

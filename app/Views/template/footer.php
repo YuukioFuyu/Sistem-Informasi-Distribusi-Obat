@@ -21,6 +21,65 @@
                 </div>
 </div>
 
+      <!--Progressive Web App-->
+      <script>
+            if ('serviceWorker' in navigator) {
+
+                window.addEventListener('load', () => {
+
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then(async (reg) => {
+
+                            console.log("SW Registered:", reg);
+
+                            // ============================
+                            // BACKGROUND SYNC
+                            // ============================
+                            if ('sync' in reg) {
+                                try {
+                                    await reg.sync.register('sync-pending-data');
+                                    console.log("Background Sync registered");
+                                } catch (err) {
+                                    console.error("Failed to register BG Sync:", err);
+                                }
+                            } else {
+                                console.warn("Background Sync not supported");
+                            }
+
+
+                            // ============================
+                            // PERIODIC SYNC
+                            // ============================
+                            if ('periodicSync' in navigator) {
+
+                                try {
+                                    const tags = await reg.periodicSync.getTags();
+                                    if (!tags.includes('sync-latest-data')) {
+
+                                        await reg.periodicSync.register('sync-latest-data', {
+                                            minInterval: 24 * 60 * 60 * 1000 // 1 hari
+                                        });
+
+                                        console.log("Periodic Sync registered");
+                                    }
+
+                                } catch (err) {
+                                    console.error("Periodic Sync registration failed:", err);
+                                }
+
+                            } else {
+                                console.warn("Periodic Sync not supported by browser");
+                            }
+
+                        }).catch(err => {
+                            console.error("SW registration failed:", err);
+                        });
+
+                });
+
+            }
+      </script>
+
       <script src="<?php echo base_url()?>/assets/dist/js/popper.min.js"></script>
        <script src="<?php echo base_url()?>/assets/plugins/jquery-ui-1.12.1/jquery-ui.min.js"></script>
       <script src="<?php echo base_url()?>/assets/plugins/bootstrap/js/bootstrap.min.js"></script>

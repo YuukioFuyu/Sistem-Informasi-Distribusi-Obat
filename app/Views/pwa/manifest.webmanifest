@@ -1,0 +1,98 @@
+{
+  "name": "SIMPharma",
+  "short_name": "SIMPharma",
+  "start_url": "/",
+  "scope": "/",
+  "display": "fullscreen",
+  "display_override": [
+    "standalone",
+    "fullscreen"
+  ],
+  "background_color": "#ffffff",
+  "theme_color": "#37a000",
+  "orientation": "portrait",
+  "lang": "id-ID",
+  "dir": "ltr",
+  "description": "Sistem Informasi Manajemen Farmasi.",
+  "icons": [
+    {
+      "src": "/assets/dist/img/pwa/192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/dist/img/pwa/512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+simpharma",
+      "url": "/customer/edit_customer?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/manufacturer/edit_manufacturer?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/medicine/edit_category?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/medicine/edit_unit?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/medicine/edit_type?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/medicine/add_leaf_setting?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/medicine/edit_medicine?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/purchase/purchase_edit?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/invoice/invoice_details?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/invoice/pos_print?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/invoice/po_print?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/invoice/invoice_edit?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/user/edit_user?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/role/edit_role?ref=%s"
+    },
+    {
+      "protocol": "web+simpharma",
+      "url": "/currency/edit_currency?ref=%s"
+    }
+  ],
+  "categories": [
+    "business",
+    "medical",
+    "productivity"
+  ]
+}
