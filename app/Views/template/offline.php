@@ -184,7 +184,7 @@
 
 <body>
     <div class="box"> <!-- Container utama -->
-        <img class="icon" src="/offline.png" alt="Offline"> <!-- Gambar ikon offline -->
+        <img class="icon" src="assets/dist/img/pwa/512.png" alt="Offline"> <!-- Gambar ikon offline -->
         <h2>Koneksi Terputus</h2> <!-- Judul -->
         <p>Anda sedang offline. Pastikan koneksi internet aktif.</p> <!-- Keterangan -->
 

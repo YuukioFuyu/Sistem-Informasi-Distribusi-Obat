@@ -3,6 +3,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="<?php  echo  ($title?$title:'Bdtask Pharmacare')?>">
         <meta name="author" content="Bdtask">
+        <link rel="manifest" href="/manifest.webmanifest">
+        <meta name="theme-color" content="#37a000">
         <title><?php  echo  ($title?$title:'Bdtask Pharmacare')?></title>
         <?php 
           $font_one = (@$dynamic_color->font_one?@$dynamic_color->font_one:'Alegreya+Sans');
@@ -71,5 +73,10 @@
              echo view('template/style.php');
         }
     ?> 
+        <script>
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js');
+            }
+        </script>
        <script src="<?php echo base_url()?>/assets/plugins/jQuery/jquery.min.js"></script>
        
