@@ -37,27 +37,60 @@
                             <?php
                          
                              $sl = 1; ?>
-                            <?php foreach ($user as $value) { ?>
+                            <?php foreach ($user as $value) { 
+                                if ($value->is_admin == 1) continue;
+                            ?>
                             <tr>
                                 <td><?php echo $sl++; ?></td>
-                                <td><img src="<?php echo base_url().$value->image; ?>" height="80px" width="70px"></td>
+                                <td><img src="<?php echo base_url().$value->image; ?>" height="80px" width="80px"></td>
                                 <td><?php echo $value->fullname; ?></td>
                                 <td><?php echo $value->email; ?></td>
                                 <td><?php echo $value->about; ?></td>
                                 <td><?php echo $value->last_login; ?></td>
                                 <td><?php echo $value->last_logout; ?></td>
                                 <td><?php echo $value->ip_address; ?></td>
-                                 <td>
-                                    <?php if (session('isAdmin')) { ?>
-                                    
-                                 
-                                   <a href="<?php echo base_url('user/edit_user/'.$value->id)?>" class="btn btn-info-soft btn-sm" data-toggle="tooltip" data-placement="left" title="Update"><i class="far fa-edit" aria-hidden="true"></i></a>
-                                    <a href="<?php echo base_url('user/delete_user/'.$value->id)?>" onclick="return confirm('<?php echo lan("are_you_sure") ?>')" class="btn btn-danger-soft btn-sm" data-toggle="tooltip" data-placement="right" title="Delete "><i class="far fa-trash-alt" aria-hidden="true"></i></a>
-                               
-                                    <?php } else { ?> 
-                                    
-                                    <button class="btn btn-info btn-sm" title="<?php if($value->is_admin ==1){echo 'Admin';}else{echo 'user';}?>"><?php if($value->is_admin ==1){echo 'Admin';}else{echo 'user';}?></button>
-                                    <?php } ?>
+                                <td>
+                                    <?php
+                                    $logged_in_id = session('id');
+                                    $logged_in_is_admin = session('isAdmin');
+                                    ?>
+
+                                    <?php 
+                                    if ($logged_in_is_admin) {
+
+                                        if ($value->is_admin == 1) {
+                                            echo '<button class="btn btn-info btn-sm" disabled>Admin</button>';
+                                        } else {
+                                            ?>
+                                            <a href="<?php echo base_url('user/edit_user/'.$value->id)?>" 
+                                            class="btn btn-info-soft btn-sm" data-toggle="tooltip" title="Update">
+                                            <i class="far fa-edit"></i></a>
+
+                                            <a href="<?php echo base_url('user/delete_user/'.$value->id)?>" 
+                                            onclick="return confirm('<?php echo lan("are_you_sure") ?>')" 
+                                            class="btn btn-danger-soft btn-sm" data-toggle="tooltip" title="Delete">
+                                            <i class="far fa-trash-alt"></i></a>
+                                            <?php
+                                        }
+
+                                    } else {
+                                        if ($value->id == $logged_in_id) {
+                                            ?>
+                                            <a href="<?php echo base_url('user/edit_user/'.$value->id)?>" 
+                                            class="btn btn-info-soft btn-sm"><i class="far fa-edit"></i></a>
+
+                                            <a href="<?php echo base_url('user/delete_user/'.$value->id)?>" 
+                                            class="btn btn-danger-soft btn-sm"><i class="far fa-trash-alt"></i></a>
+                                            <?php
+                                        } else {
+                                            ?>
+                                            <button class="btn btn-info btn-sm" disabled>
+                                                <?php echo ($value->is_admin == 1 ? 'Admin' : 'User'); ?>
+                                            </button>
+                                            <?php
+                                        }
+                                    }
+                                    ?>
                                 </td>
                             </tr>
                             <?php } ?> 
@@ -69,5 +102,3 @@
         </div>
     </div>
 </div>
-
- 
