@@ -15,16 +15,37 @@
                             <?php echo lan('user') ?> <span class="text-danger"> *</span>
                         </label>
                         <div class="col-sm-9">
-                            <select class="form-control select2" name="user_id" id="user_type" onchange="userRole(this.value)">
+                            <?php
+                            $logged_in_id = session('id');        // ID user yang sedang login
+                            $logged_in_is_admin = session('isAdmin'); // Apakah user login adalah admin
+                            ?>
+
+                            <select class="form-control select2" name="user_id" onchange="userRole(this.value)">
                                 <option value=""><?php echo lan('select_one') ?></option>
-                                <?php
-                              
-                                foreach($user as $udata){
-                                    ?>
-                                    <option value="<?php echo $udata['id'] ?>"><?php echo $udata['firstname'].' '.$udata['lastname'] ?></option>
+
+                                <?php foreach ($user as $udata): ?>
+
                                     <?php
-                                }
-                                ?>
+                                    // Jika target adalah admin
+                                    if ($udata['is_admin'] == 1) {
+
+                                        // Admin hanya boleh melihat dirinya sendiri
+                                        if (!$logged_in_is_admin || $udata['id'] != $logged_in_id) {
+                                            continue;
+                                        }
+                                    }
+
+                                    // User biasa hanya boleh melihat dirinya sendiri
+                                    if (!$logged_in_is_admin && $udata['id'] != $logged_in_id) {
+                                        continue;
+                                    }
+                                    ?>
+
+                                    <option value="<?= $udata['id'] ?>">
+                                        <?= $udata['firstname'].' '.$udata['lastname'] ?>
+                                    </option>
+
+                                <?php endforeach; ?>
                             </select>
                         </div>
                      </div>
