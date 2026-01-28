@@ -125,6 +125,23 @@ class Report extends BaseController
         echo json_encode($data);
     }
 
+    public function batchwise_sales_report()
+    {
+        $data['title']         = 'Batch Wise Sale Report';
+        $data['module']        = "Report";
+        $data['batch_list']    = $this->report_model->batch_list();
+        $data['page']          = "batchwise_sales_report"; 
+        return $this->template->layout($data);
+
+    }
+
+    public function bdtask_CheckbatchwisesalesreportList()
+     {
+        $postData = $this->request->getVar();
+        $data     = $this->report_model->getbatchwise_salesreportList($postData);
+        echo json_encode($data);
+    }
+
 
     public function categorywise_sales_report()
     {

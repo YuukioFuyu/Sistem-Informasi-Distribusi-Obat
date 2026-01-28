@@ -1986,7 +1986,7 @@ $(document).ready(function () {
             columns: [
                 { data: "sl" },
                 { data: "customer_name" },
-                { data: "customer_tin" },
+                { data: "customer_pbd" },
                 { data: "address" },
                 { data: "mobile" },
                 { data: "email" },
@@ -2039,7 +2039,7 @@ $(document).ready(function () {
             columns: [
                 { data: "sl" },
                 { data: "customer_name" },
-                { data: "customer_tin" },
+                { data: "customer_pbd" },
                 { data: "address" },
                 { data: "mobile" },
                 { data: "email" },
@@ -2092,7 +2092,7 @@ $(document).ready(function () {
             columns: [
                 { data: "sl" },
                 { data: "customer_name" },
-                { data: "customer_tin" },
+                { data: "customer_pbd" },
                 { data: "address" },
                 { data: "mobile" },
                 { data: "email" },
@@ -2849,6 +2849,66 @@ $(document).ready(function () {
                     { data: "sl" },
                     { data: "date" },
                     { data: "product_name" },
+                    { data: "invoice" },
+                    { data: "customer_name" },
+                    { data: "quantity", class: "total_qty text-right" },
+                    { data: "rate" },
+                    { data: "discount", class: "total text-right" },
+                    { data: "total", class: "total text-right" },
+                ],
+                footerCallback: function (t, a, l, n, o) {
+                    var i = this.api();
+                    i.columns(".total_qty", { page: "current" }).every(function () {
+                        var t = this.data().reduce(function (t, e) {
+                            return (parseFloat(t) || 0) + (parseFloat(e) || 0);
+                        }, 0);
+                        $(this.footer()).html(t.toLocaleString(void 0, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                    }),
+                        i.columns(".total", { page: "current" }).every(function () {
+                            var t = this.data().reduce(function (t, e) {
+                                return (parseFloat(t) || 0) + (parseFloat(e) || 0);
+                            }, 0);
+                            $(this.footer()).html(e + " " + t.toLocaleString(void 0, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
+                        });
+                },
+            });
+        $("#btn-filter-pur").on("click", function (t) {
+            l.ajax.reload();
+        });
+    }),
+    $(document).ready(function () {
+        var t = $('[name="csrf_test_name"]').val(),
+            e = $("#currency").val(),
+            a = $("#base_url").val(),
+            l = $("#batchWiseSalesreport").DataTable({
+                responsive: !0,
+                dom: "<'row'<'col-md-6'Bl><'col-md-6'f>>rt<'bottom'ip><'clear'>",
+                aaSorting: [[1, "desc"]],
+                columnDefs: [{ bSortable: !1, aTargets: [0, 2, 3, 4, 5, 6, 7, 8, 9] }],
+                processing: !0,
+                serverSide: !0,
+                lengthMenu: [
+                    [10, 25, 50, 100, 250, 500, -1],
+                    [10, 25, 50, 100, 250, 500, "All"],
+                ],
+                buttons: [
+                    { extend: "copyHtml5", text: '<i class="far fa-copy"></i>', titleAttr: "Copy", exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, title: "Batch Wise Sales Report", className: "btn-light" },
+                    { extend: "excelHtml5", text: '<i class="far fa-file-excel"></i>', titleAttr: "Excel", exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, title: "Batch Wise Sales Report", className: "btn-light" },
+                    { extend: "csvHtml5", text: '<i class="far fa-file-alt"></i>', titleAttr: "CSV", exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, title: "Batch Wise Sales Report", className: "btn-light" },
+                    { extend: "pdfHtml5", text: '<i class="far fa-file-pdf"></i>', titleAttr: "PDF", exportOptions: { columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }, title: "Batch Wise Sales Report", className: "btn-light" },
+                ],
+                serverMethod: "post",
+                ajax: {
+                    url: a + "/report/getbatchwise_sales_reportList",
+                    data: function (e) {
+                        (e.fromdate = $("#from_date").val()), (e.todate = $("#to_date").val()), (e.batch_id = $("#batch_id").val()), (e.app_csrf = t);
+                    },
+                },
+                columns: [
+                    { data: "sl" },
+                    { data: "date" },
+                    { data: "product_name" },
+                    { data: "batch_id" },
                     { data: "invoice" },
                     { data: "customer_name" },
                     { data: "quantity", class: "total_qty text-right" },

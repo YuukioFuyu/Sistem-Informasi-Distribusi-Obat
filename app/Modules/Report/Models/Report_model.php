@@ -964,4 +964,153 @@ class Report_model
     return $builder;
     }
 
+    public function batch_list()
+    {
+        $builder = $this->db->table('product_purchase_details');
+        $builder->select('batch_id');
+        $builder->distinct();
+        $query   = $builder->get();
+        $data    = $query->getResult();
+        
+       $list = array('' => 'Select Batch ID');
+        if(!empty($data)){
+            foreach ($data as $value){
+                $list[$value->batch_id]=$value->batch_id;
+            }
+        }
+        return $list;  
+    }
+
+
+    public function getbatchwise_salesreportList($postData=null){
+          $response   = array();
+          $fromdate   = ($this->request->getVar('fromdate')?$this->request->getVar('fromdate'):date('Y-m-d'));
+          $todate     = ($this->request->getVar('todate')?$this->request->getVar('todate'):date('Y-m-d'));
+          $batch_id   = $this->request->getVar('batch_id');
+         
+         $draw            = $postData['draw'];
+         $start           = $postData['start'];
+         $rowperpage      = $postData['length']; 
+         $columnIndex     = $postData['order'][0]['column'];
+         $columnName      = $postData['columns'][$columnIndex]['data'];
+         $columnSortOrder = $postData['order'][0]['dir'];
+         $searchValue     = $postData['search']['value'];
+         
+         ## Total number of records without search filtering
+           $builder1 = $this->db->table('invoice_details a');
+           $builder1->select("count(*) as allcount");
+           $builder1->join('product_information b', 'b.product_id = a.product_id');
+           $builder1->join('invoice c', 'c.invoice_id = a.invoice_id');
+           $builder1->join('customer_information d', 'd.customer_id = c.customer_id');
+           
+           if(!empty($fromdate) && !empty($todate)){
+                $builder1->where('c.date >=', $fromdate);
+                $builder1->where('c.date <=', $todate);
+           }
+           if(!empty($batch_id)){
+                $builder1->where('a.batch_id', $batch_id);
+           }
+           $builder1->where('a.quantity >',0);
+                
+           $query1       =  $builder1->get();
+           $records      =  $query1->getRow();
+           $totalRecords = $records->allcount;
+
+         ## Total number of record with filtering
+           $builder2 = $this->db->table('invoice_details a');
+           $builder2->select("count(*) as allcount");
+           $builder2->join('product_information b', 'b.product_id = a.product_id');
+           $builder2->join('invoice c', 'c.invoice_id = a.invoice_id');
+           $builder2->join('customer_information d', 'd.customer_id = c.customer_id');
+           
+           if($searchValue != ''){
+               $builder2->groupStart()
+                        ->like('d.customer_name', $searchValue)
+                        ->orLike('c.invoice', $searchValue)
+                        ->orLike('c.date', $searchValue)
+                        ->orLike('a.batch_id', $searchValue)
+                        ->groupEnd();
+           }
+           if(!empty($fromdate) && !empty($todate)){
+                $builder2->where('c.date >=', $fromdate);
+                $builder2->where('c.date <=', $todate);
+           }
+           if(!empty($batch_id)){
+                $builder2->where('a.batch_id', $batch_id);
+           }
+           $builder2->where('a.quantity >', 0);
+           $query2      =  $builder2->get();
+           $records     =   $query2->getRow();
+           $totalRecordwithFilter = $records->allcount;
+
+        ## Fetch records
+        $builder3 = $this->db->table('invoice_details a');
+        $builder3->select("a.*,b.product_name,b.strength,c.date,c.invoice,c.total_amount,d.customer_name");
+        $builder3->join('product_information b', 'b.product_id = a.product_id');
+        $builder3->join('invoice c', 'c.invoice_id = a.invoice_id');
+        $builder3->join('customer_information d', 'd.customer_id = c.customer_id');
+        
+        if($searchValue != ''){
+           $builder3->groupStart()
+                    ->like('d.customer_name', $searchValue)
+                    ->orLike('c.invoice', $searchValue)
+                    ->orLike('c.date', $searchValue)
+                    ->orLike('a.batch_id', $searchValue)
+                    ->groupEnd();
+        }
+        if(!empty($fromdate) && !empty($todate)){
+            $builder3->where('c.date >=', $fromdate);
+            $builder3->where('c.date <=', $todate);
+        }  
+        if(!empty($batch_id)){
+             $builder3->where('a.batch_id',$batch_id);
+        }
+        $builder3->where('a.quantity >',0);    
+        $builder3->orderBy($columnName, $columnSortOrder);
+        $builder3->limit($rowperpage, $start);
+        $query3   =  $builder3->get();
+        $records  =   $query3->getResult();
+        $data     = array();
+        $sl       = 1;
+        
+        $setting_data = $this->setting_info();
+        foreach($records as $record ){ 
+          $dis_amount = 0;
+          if($setting_data->discount_type == 1){
+            $dis_amount = ($record->quantity*$record->rate*$record->discount)/100;
+          }
+          if($setting_data->discount_type == 2){
+            $dis_amount = ($record->quantity*$record->discount);
+          }
+          if($setting_data->discount_type == 3){
+            $dis_amount = ($record->discount);
+          }
+          $total = $record->quantity*$record->rate;
+          $data[] = array( 
+                'sl'               =>$sl,
+                'date'             =>$record->date,
+                'product_name'     =>$record->product_name.'('.$record->strength.')',
+                'batch_id'         =>$record->batch_id,
+                'invoice'          =>$record->invoice,
+                'customer_name'    =>$record->customer_name,
+                'quantity'         =>$record->quantity,
+                'discount'         =>$dis_amount,
+                'rate'             =>$record->rate,
+                'total'            =>($total?$total:0) - ($dis_amount?$dis_amount:0),
+                
+          ); 
+          $sl++;
+        }
+
+         ## Response
+         $response = array(
+            "draw"                 => intval($draw),
+            "iTotalRecords"        => $totalRecords,
+            "iTotalDisplayRecords" => $totalRecordwithFilter,
+            "aaData"               => $data
+         );
+
+         return $response; 
+    }
+
 }

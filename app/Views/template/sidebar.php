@@ -305,7 +305,7 @@
                   <!-- account menu end -->
 
                   <!-- report menu start -->
-          <?php if($permission->method('add_closing','create')->access() || $permission->method('closing_list','read')->access() || $permission->method('sales_report','read')->access() || $permission->method('userwise_sales_report','read')->access() || $permission->method('productwise_sales_report','read')->access() || $permission->method('categorywise_sales_report','read')->access() || $permission->method('purchase_report','read')->access() || $permission->method('purchase_report_categorywise','read')->access()){?>          
+          <?php if($permission->method('add_closing','create')->access() || $permission->method('closing_list','read')->access() || $permission->method('sales_report','read')->access() || $permission->method('userwise_sales_report','read')->access() || $permission->method('productwise_sales_report','read')->access() || $permission->method('batchwise_sales_report','read')->access() || $permission->method('categorywise_sales_report','read')->access() || $permission->method('purchase_report','read')->access() || $permission->method('purchase_report_categorywise','read')->access()){?>          
          <li class="<?php echo (($segment_2=="report")?"mm-active":'') ?>">
           <a class="has-arrow material-ripple" href="#">
                               <i class="fas fa-book-open mr-2"></i>
@@ -326,6 +326,9 @@
               <?php }?>
               <?php if($permission->method('productwise_sales_report','read')->access()){?>
               <li class="<?php echo (($segment_3=="productwise_sales_report")?"mm-active":'') ?>"><a href="<?php echo base_url('report/productwise_sales_report')?>"><?php echo lan('productwise_sales_report')?></a></li>
+              <?php }?>
+              <?php if($permission->method('batchwise_sales_report','read')->access()){?>
+              <li class="<?php echo (($segment_3=="batchwise_sales_report")?"mm-active":'') ?>"><a href="<?php echo base_url('report/batchwise_sales_report')?>"><?php echo lan('batchwise_sales_report')?></a></li>
               <?php }?>
              <?php if($permission->method('categorywise_sales_report','read')->access()){?> 
               <li class="<?php echo (($segment_3=="categorywise_sales_report")?"mm-active":'') ?>"><a href="<?php echo base_url('report/categorywise_sales_report')?>"><?php echo lan('categorywise_sales_report')?></a></li>
