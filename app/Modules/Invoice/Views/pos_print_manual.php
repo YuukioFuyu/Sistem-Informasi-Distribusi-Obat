@@ -34,7 +34,7 @@
     $main->invoice                 = $main->invoice ?? '0000';
     $main->date                    = $main->date ?? '';
     $main->customer_name           = $main->customer_name ?? '';
-    $main->customer_tin            = $main->customer_tin ?? '-';
+    $main->customer_pbd            = $main->customer_pbd ?? '-';
     $main->sales_firstname         = $main->sales_firstname ?? 'Sales';
     $main->sales_lastname          = $main->sales_lastname ?? '';
     $main->printed_firstname       = $main->printed_firstname ?? 'Operator';
@@ -398,7 +398,7 @@
                 <div class="right-header">
                     <?php $dateTime = new DateTime($main->date); echo htmlspecialchars($dateTime->format('d/m/Y H:i:s')); ?><br>
                     Kepada: <?php echo htmlspecialchars($main->customer_name); ?><br>
-                    NPWP: <?php echo htmlspecialchars($main->customer_tin); ?><br>
+                    PBF: <?php echo htmlspecialchars($main->customer_pbd); ?><br>
                 </div>
 
                 <!-- Tengah -->

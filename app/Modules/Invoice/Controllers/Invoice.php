@@ -690,4 +690,14 @@ class Invoice extends BaseController
         $data['page']    = "po_print_manual"; 
         return $this->template->layout($data);
     }
+
+    public function bdtask_pi_print($invoice_id = null){
+        $data['title']   = 'PI Print';
+        $data['company'] = $this->invoiceModel->company_details();
+        $data['main']    = $this->invoiceModel->invoice_main($invoice_id);
+        $data['details'] = $this->invoiceModel->invoice_details($invoice_id);
+        $data['module']  = "Invoice";
+        $data['page']    = "pi_print_manual"; 
+        return $this->template->layout($data);
+    }
 }
