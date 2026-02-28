@@ -14,6 +14,7 @@ $routes->group('purchase', ['namespace' => 'App\Modules\Purchase\Controllers'], 
 	$subroutes->add('purchase_list', 'Purchase::index');
 	$subroutes->add('purchase_list_check', 'Purchase::bdtask_CheckpurchaseList');
 	$subroutes->add('purchase_details/(:num)', 'Purchase::bdtask_002m_purchase_details/$1');
+	$subroutes->add('purchase_print/(:num)', 'Purchase::bdtask_005_purchase_print/$1');
 	$subroutes->add('purchase_edit/(:num)', 'Purchase::bdtask_003m_purchase_edit/$1');
 	$subroutes->add('delete_purchase/(:num)', 'Purchase::delete_purchase/$1');
 	

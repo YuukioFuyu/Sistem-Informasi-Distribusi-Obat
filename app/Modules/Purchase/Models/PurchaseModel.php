@@ -580,6 +580,7 @@ class PurchaseModel
 
 
           $button .=' <a href="'.$base_url.'/purchase/purchase_details/'.$record->purchase_id.'" class="btn btn-success-soft btn-sm" data-toggle="tooltip" data-placement="left" title="Details"><i class="fas fa-eye" aria-hidden="true"></i></a>';
+          $button .=' <a href="'.$base_url.'/purchase/purchase_print/'.$record->purchase_id.'" class="btn btn-warning-soft btn-sm" data-toggle="tooltip" data-placement="left" title="Print"><i class="fas fa-print" aria-hidden="true"></i></a>';
       
        if($this->permission->method('purchase_list','update')->access()){  
           $button .=' <a href="'.$base_url.'/purchase/purchase_edit/'.$record->purchase_id.'" class="btn btn-primary-soft btn-sm" data-toggle="tooltip" data-placement="left" title="Update"><i class="fas fa-edit" aria-hidden="true"></i></a>';

@@ -254,4 +254,26 @@ class Purchase extends BaseController
         return $con.date('s');
     }
 
+    public function bdtask_005_purchase_print($id = null)
+    {
+        $purchase = $this->purchaseModel->singledata($id);
+        $details  = $this->purchaseModel->detailsdata($id);
+        $main = (object)[
+            'invoice'         => $purchase->chalan_no,
+            'date'            => $purchase->purchase_date,
+            'customer_name'   => $purchase->manufacturer_name,
+            'customer_mobile' => $purchase->mobile,
+        ];
+
+        $data = [
+            'title'   => 'Purchase Print',
+            'company' => $this->purchaseModel->setting_data(),
+            'main'    => $main,
+            'details' => $details,
+            'module'  => "Purchase",
+            'page'    => "purchase_print_manual"
+        ];
+
+        return $this->template->layout($data);
+    }
 }
